@@ -1,0 +1,48 @@
+{% extends 'registration/base.html' %}
+{% load static %}
+{% block title %} Log-in {% endblock %}
+
+{% block content %}
+
+
+<main class="form-signin">
+
+	<form action="{% url 'mapas:login' %}" method="post">
+		<img class="mb-4" src="{% static 'img/itti_login.png' %}" alt=""   >
+		<h1 class="h3 mb-3 fw-normal">Credenciais de acesso</h1>
+
+		{% if form.errors %}
+		<p style="color:red;">
+			Seu usuário e senha não correspondem!
+		</p>
+
+		{% endif %}
+
+		<div class="form-floating">
+			
+			<input type="text" id="id_username" name="username" class="form-control {% if form.errors %} is-invalid {% endif %}  " placeholder="Username" autofocus autocomplete="username" required >
+			<label for="id_username" ></label>
+
+		</div>
+		<div class="form-floating">
+			
+			<input type="password" id="id_password" name="password"  placeholder="Password" class="form-control {% if form.errors %} is-invalid {% endif %}" autocomplete="current-password" required >
+			<label for="id_password" ></label>
+		</div>
+		    <div class="checkbox mb-3">
+		      <label>
+		        <input type="checkbox" value="remember-me"> Lembrar-me
+		      </label>
+		  </div>
+		{% csrf_token %}
+		<input type="hidden" name="next" value="{{next}}" />
+		<button class="w-100 btn btn-lg btn-primary" type="submit">Acessar</button>
+		<p class="mt-5 mb-3 text-muted">&copy; 2009-2025</p>
+	</form>
+</main>
+{% endblock %}
+
+
+
+
+

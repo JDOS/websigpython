@@ -103,7 +103,7 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
             console.log(content.features[i].id.split('.')[0]);
             let titulo = content.features[i].id.split('.')[0];
             if (titulo !=''){
-                text+="<h3>"+titulo+"</h3>";
+                text+="<h4>"+titulo+"</h4>";
             }
             for (const x in content.features[i].properties) {
                 let valor = content.features[i].properties[x];

@@ -25,19 +25,22 @@ SECRET_KEY = 'django-insecure-a2f-#mws3ojz8$e-0rlqlr+i%0grv@uwkvxo^kg#_!4fi4auu2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost','www.reservashidricasiguacu.com.br','reservashidricasiguacu.com.br']
+ALLOWED_HOSTS = ["localhost","www.reservashidricasiguacu.com.br","reservashidricasiguacu.com.br"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost",'https://www.reservashidricasiguacu.com.br','https://reservashidricasiguacu.com.br']
+
 
 
 # Application definition
 
 INSTALLED_APPS = [
+        'mapas',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'mapas',
+
 ]
 
 MIDDLEWARE = [
@@ -118,10 +121,13 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-STATIC_ROOT = "/var/www/html/websigpython/sanepar/mapas/static/"
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+LOGIN_REDIRECT_URL = 'mapas:websig'
+LOGOUT_REDIRECT_URL = 'mapas:index'
+LOGIN_URL = 'mapas:login'
+LOGOUT_URL = 'mapas:logout'

@@ -1,0 +1,95 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Silvério, Jônatas D O, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.80.0">
+    <title>{% block title %}{% endblock %}</title>
+
+    <!-- Bootstrap core CSS -->
+
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <link href="{% static 'js/bootstrap.bundle.js' %}" rel="text/javascript">
+
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<title> Login - Reservas Hídricas </title>
+    <!-- Custom styles for this template -->
+    <link href="{% static 'login.css' %}" rel="stylesheet">
+
+      <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      .card{
+        border: 3px solid rgb(0 0 0);
+    }
+  
+    </style>
+  
+    
+    
+  </head>
+  <body class="text-center">
+    <div class="container">
+      <div class="row justify-content-center align-items-center" style="height:100vh">
+
+              <div class="card" style="width: 25rem;">
+              <img src="{% static 'mapas/images/logo.svg' %}"  class="image" alt="logo" style="padding:20px;">
+                  <div class="card-body">
+
+    {% block content %}
+    {% endblock %}
+  </div>
+        
+</div>
+</div>
+
+
+  </body>
+</html>
+
+
+<html>
+<head>
+
+
+
+<div class="container">
+        <div class="row justify-content-center align-items-center" style="height:100vh">
+  
+                <div class="card" style="width: 25rem;">
+                <img src="img\logo.png" class="image" alt="logo" style="padding:20px;">
+                    <div class="card-body">
+                        <form method="POST" action="login.php" autocomplete="off">
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="login" id="login">
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control" name="senha" id="senha">
+                            </div>
+                            <button type="submit" id="entrar" value="entrar" class="btn btn-dark btn-block" id="entrar" name="entrar">Login</button>
+                        </form>
+                    </div>
+                </div>
+        
+        </div>
+    </div>
+

@@ -1,0 +1,87 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Reservas Hídricas do Iguaçu - Sanepar</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .trapezoid {
+            clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+            width: 100%;
+            height: 300px;
+            background-size: cover;
+            background-position: center;
+        }
+        .navbar-brand img {
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+        <a class="navbar-brand" href="/"><img src="logo.png" alt="Logo"></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" href="/websig/">Websig</a></li>
+                <li class="nav-item"><a class="nav-link" href="/panorama/">Panorama</a></li>
+                <li class="nav-item"><a class="nav-link" href="/streetview/">Street View</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Fotos</a></li>
+            </ul>
+            <a href="/login/" class="btn btn-outline-light">Login</a>
+        </div>
+
+</nav>
+
+    
+    <header class="text-center p-5" style="background: url('header.jpg') center/cover;">
+        <h1>Reservas Hídricas do Iguaçu</h1>
+        <p>Monitoramento e preservação das reservas hídricas.</p>
+
+       
+    </header>
+    
+    <div class="container my-5">
+
+        <h3>Sobre</h3>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi finibus consequat ex, eget semper erat vestibulum id. Cras et libero velit. Praesent ut lectus tellus. Nam rhoncus, neque ac maximus tincidunt, erat eros condimentum libero, sed tempus erat lectus non nisl. Ut lacinia elit enim, nec elementum augue euismod interdum. Curabitur dignissim libero id lorem malesuada rhoncus. Integer et justo sagittis, mollis elit a, lacinia mauris. Nulla ornare turpis sit amet neque luctus, eu varius eros porta. Nunc vulputate tempus volutpat. Morbi porta ipsum quis risus aliquam, at porta ipsum lobortis. Praesent tempor enim in dictum accumsan. Sed mi ligula, convallis at sapien eu, fringilla vestibulum orci. Curabitur in convallis metus.</p>
+        <div class="row g-6">
+            <div class="col-md-6">
+                <div class="trapezoid" style="background-image: url({% static 'mapas/images/image1.jpg' %});"></div>
+            </div>
+            <div class="col-md-6">
+             <h3>Websig</h3>
+             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi finibus consequat ex, eget semper erat vestibulum id. Cras et libero velit. Praesent ut lectus tellus. Nam rhoncus, neque ac maximus tincidunt, erat eros condimentum libero, sed tempus erat lectus non nisl. Ut lacinia elit enim, nec elementum augue euismod interdum. Curabitur dignissim libero id lorem malesuada rhoncus. Integer et justo sagittis, mollis elit a, lacinia mauris. Nulla ornare turpis sit amet neque luctus, eu varius eros porta. Nunc vulputate tempus volutpat. Morbi porta ipsum quis risus aliquam, at porta ipsum lobortis. Praesent tempor enim in dictum accumsan. Sed mi ligula, convallis at sapien eu, fringilla vestibulum orci. Curabitur in convallis metus.</p>
+            </div>
+            <div class="col-md-6">
+                <h3>Fotos</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi finibus consequat ex, eget semper erat vestibulum id. Cras et libero velit. Praesent ut lectus tellus. Nam rhoncus, neque ac maximus tincidunt, erat eros condimentum libero, sed tempus erat lectus non nisl. Ut lacinia elit enim, nec elementum augue euismod interdum. Curabitur dignissim libero id lorem malesuada rhoncus. Integer et justo sagittis, mollis elit a, lacinia mauris. Nulla ornare turpis sit amet neque luctus, eu varius eros porta. Nunc vulputate tempus volutpat. Morbi porta ipsum quis risus aliquam, at porta ipsum lobortis. Praesent tempor enim in dictum accumsan. Sed mi ligula, convallis at sapien eu, fringilla vestibulum orci. Curabitur in convallis metus.</p>
+             </div>
+            <div class="col-md-6">
+                <div class="trapezoid" style="background-image: url({% static 'mapas/images/image2.jpg' %});"></div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="trapezoid" style="background-image: url({% static 'mapas/images/image3.jpg' %});"></div>
+            </div>
+            <div class="col-md-6">
+                <h3>StreetView</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi finibus consequat ex, eget semper erat vestibulum id. Cras et libero velit. Praesent ut lectus tellus. Nam rhoncus, neque ac maximus tincidunt, erat eros condimentum libero, sed tempus erat lectus non nisl. Ut lacinia elit enim, nec elementum augue euismod interdum. Curabitur dignissim libero id lorem malesuada rhoncus. Integer et justo sagittis, mollis elit a, lacinia mauris. Nulla ornare turpis sit amet neque luctus, eu varius eros porta. Nunc vulputate tempus volutpat. Morbi porta ipsum quis risus aliquam, at porta ipsum lobortis. Praesent tempor enim in dictum accumsan. Sed mi ligula, convallis at sapien eu, fringilla vestibulum orci. Curabitur in convallis metus.</p>
+             </div>
+        </div>
+    </div>
+    
+    <footer class="bg-dark text-white text-center py-3">
+        <p>&copy; 2025 Sanepar - Todos os direitos reservados.</p>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
