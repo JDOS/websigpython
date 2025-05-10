@@ -524,7 +524,10 @@
                     ]
                 },
                 
+                {label: '<b>Lote 2</b>',
 
+
+                    children: [
 
                 
                 {label: '<b>Produto 2</b><img src="{% static 'mapas/images/download-icon.svg' %}" onclick="downloadproduto2();" width=18px>',
@@ -717,7 +720,85 @@
                 {label: 'Sanepar:Vegetação da RN07 - 28/08/2024', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:Vegetação da RN07 - 28/08/2024',transparent: true,format: 'image/png'})},
             ]
             },
+            ]
+        },
+                        
+                {label: '<b>Lote 3</b>',
 
+
+                children: [
+
+                
+                {label: '<b>Produto 3</b>',
+                    selectAllCheckbox: true,
+                     children: [
+                                                                                                                                                           
+                     {label: 'Ponto de monitoramento fluviometrico', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:Ponto de monitoramento fluviometrico',transparent: true,format: 'image/png'})},
+                     {label: 'Parte 1', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:Parte 1',transparent: true,format: 'image/png'})},
+                     {label: 'Parte 2', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:Parte 2',transparent: true,format: 'image/png'})},
+                     {label: 'Parte 3', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:Parte 3',transparent: true,format: 'image/png'})},
+                     {label: 'seção do perfil 1', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:seção do perfil 1',transparent: true,format: 'image/png'})},
+                     {label: 'seção do perfil 2', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:seção do perfil 2',transparent: true,format: 'image/png'})},
+                     {label: 'KM da ferrovia', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:KM da ferrovia',transparent: true,format: 'image/png'})},
+                     {label: 'RN - IBGE', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:RN - IBGE',transparent: true,format: 'image/png'})},
+
+                  
+                    
+                    ]
+                },
+
+                {label: '<b>Produto 4</b>',
+                    selectAllCheckbox: true,
+                     children: [
+                                                                                                                                                           
+                    {label: 'ALTERNATIVA 01', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:ALTERNATIVA 01',transparent: true,format: 'image/png'})},
+                    {label: 'ALTERNATIVA 02', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:ALTERNATIVA 02',transparent: true,format: 'image/png'})},
+                    {label: 'ALTERNATIVA 03', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:ALTERNATIVA 03',transparent: true,format: 'image/png'})},
+                    {label: 'Outorgas sem peso', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:Outorgas sem peso',transparent: true,format: 'image/png'})},
+                    {label: 'Outorgas utilizados no calculo de vazão à montante', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:Outorgas utilizados no calculo de vazão à montante',transparent: true,format: 'image/png'})},
+                     {label: 'Outorgas à montante', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:Outorgas à montante',transparent: true,format: 'image/png'})},
+                     {label: 'Outorgas com peso', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:Outorgas com peso',transparent: true,format: 'image/png'})},
+                      {label: 'Linha ferroviária', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:Linha ferroviária',transparent: true,format: 'image/png'})},
+                   {label: 'Sstações fluvio selecionadas final', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:estações fluvio selecionadas final',transparent: true,format: 'image/png'})},
+                     {label: 'Outorgas montante', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:Outorgas montante',transparent: true,format: 'image/png'})},
+                    ]
+                },
+
+                {label: '<b>Produto 5</b>',
+                    selectAllCheckbox: true,
+                     children: [
+                                                                                                                                                           
+                    {label: 'Cenários das áreas de estudo', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:Cenários das áreas de estudo',transparent: true,format: 'image/png'})},
+                     {label: 'ETE_ATUBA_E_BELEM', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:ETE_ATUBA_E_BELEM',transparent: true,format: 'image/png'})},
+                      {label: 'Pontos de monitoramento fluviométrico', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:Pontos de monitoramento fluviométrico',transparent: true,format: 'image/png'})},
+                  
+                    
+                    ]
+                },
+
+                {label: '<b>Produto 6</b>',
+                    selectAllCheckbox: true,
+                     children: [
+                                                                                                                                                           
+                     {label: 'Sanepar:Alternativa 01A e 01B', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:Alternativa 01A e 01B',transparent: true,format: 'image/png'})},
+                     {label: 'Sanepar:Alternativa de captação 2', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:Alternativa de captação 2',transparent: true,format: 'image/png'})},
+                     {label: 'Sanepar:Alternativa de captação 3', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:Alternativa de captação 3',transparent: true,format: 'image/png'})},
+                     {label: 'Sanepar:Linha ferroviária', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:Linha ferroviária',transparent: true,format: 'image/png'})},
+                     {label: 'Sanepar:Adutora em comum entre as alternativas', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:Adutora em comum entre as alternativas',transparent: true,format: 'image/png'})},
+                     {label: 'Sanepar:Adutora em comum entre as alternativas 1 e 3', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:Adutora em comum entre as alternativas 1 e 3',transparent: true,format: 'image/png'})},
+                     {label: 'Sanepar:Alternativa inicial', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:Alternativa inicial',transparent: true,format: 'image/png'})},
+                     {label: 'Sanepar:Alternativa de adutora 1', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:Alternativa de adutora 1',transparent: true,format: 'image/png'})},
+                     {label: 'Sanepar:Alternativa de adutora 2', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:Alternativa de adutora 2',transparent: true,format: 'image/png'})},
+                     {label: 'Sanepar:ETE Passaúna', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:ETE Passaúna',transparent: true,format: 'image/png'})},
+                     {label: 'Sanepar:Localização final do ponto de adução', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:Localização final do ponto de adução',transparent: true,format: 'image/png'})},
+                     {label: 'Sanepar:Adutoras', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:Adutoras',transparent: true,format: 'image/png'})},
+                  
+                    
+                    ]
+                },
+
+                ]
+                },
             ]
         };
 
