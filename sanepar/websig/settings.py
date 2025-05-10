@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-a2f-#mws3ojz8$e-0rlqlr+i%0grv@uwkvxo^kg#_!4fi4auu2
 DEBUG = True
 
 ALLOWED_HOSTS = ["localhost","www.reservashidricasiguacu.com.br","reservashidricasiguacu.com.br"]
-CSRF_TRUSTED_ORIGINS = ["http://localhost",'https://www.reservashidricasiguacu.com.br','https://reservashidricasiguacu.com.br']
+CSRF_TRUSTED_ORIGINS = ["https://localhost:8000",'https://www.reservashidricasiguacu.com.br','https://reservashidricasiguacu.com.br']
 
 
 
