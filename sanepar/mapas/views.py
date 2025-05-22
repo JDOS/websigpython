@@ -14,16 +14,17 @@ def index(request):
     context = {}
     return render(request, "mapas/index.html", context)
 
-@login_required
-def websig(request):
-    context = {}
-    return render(request, "mapas/websig.html", context)
+# @login_required
+# def websig(request):
+#     context = {}
+#     return render(request, "mapas/websig.html", context)
 
 @login_required
-def websig2(request):
+def websig(request):
     layers = get_layers_wms()
+    wms_link_download = "https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.1.1&request=GetFeature&typeName="
     wms_link="https://sistemas.itti.org.br/geoserver/Sanepar/wms?"
-    return render(request, "mapas/websig2.html", {"layers":layers,"wms":wms_link})
+    return render(request, "mapas/websig2.html", {"layers":layers,"wms":wms_link,"link_download":wms_link_download})
 
 def streetview(request):
     context = {}

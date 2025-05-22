@@ -20,7 +20,9 @@ def get_layers_wms():
             list_produts[nomelayer]=[]
             for sub in layer.children:
                 #print(f"    - {sub.name} ({sub.title})")
-                list_produts[nomelayer].append(WORKSPACE+":"+sub.title)
+                name=WORKSPACE+":"+sub.name
+                tupla=(name,sub.title)
+                list_produts[nomelayer].append(tupla)
 
     # for k,v in list_produts.items():
     #     print(k,v)
