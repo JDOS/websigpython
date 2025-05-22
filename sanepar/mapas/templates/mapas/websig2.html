@@ -1,0 +1,757 @@
+{% load static %}
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Websig - Sanepar</title>
+
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet-src.js" crossorigin=""></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" crossorigin=""></script>
+
+    
+    <!--link rel="stylesheet" href="../../Leaflet/dist/leaflet.css" crossorigin=""/>
+    <script src="../../Leaflet/dist/leaflet-src.js" crossorigin=""></script-->
+
+        <script src="{% static 'mapas/L.TileLayer.BetterWMS.js' %}"></script>
+
+        <script src="{% static 'mapas/plugins/L.Control.Pan.js' %}"></script>
+        <script src="{% static 'mapas/plugins/L.Control.Zoomslider.js' %}"></script>
+        <script src="{% static 'mapas/plugins/L.Control.MousePosition.js' %}"></script>
+        <script src="{% static 'mapas/plugins/L.Control.Sidebar.js' %}"></script>
+        <script src="{% static 'mapas/plugins/Leaflet.PolylineMeasure.js' %}"></script>
+        <script src="{% static 'mapas/plugins/easy-button.js' %}"></script>
+        <script src="{% static 'mapas/plugins/leaflet-providers.js' %}"></script>
+        <script src="{% static 'mapas/plugins/leaflet-opencage/src/js/L.Control.OpenCageSearch.js' %}"></script>
+        <link rel="stylesheet" href="{% static 'mapas/plugins/L.Control.Pan.css' %}">
+        <link rel="stylesheet" href="{% static 'mapas/plugins/L.Control.Zoomslider.css' %}">
+        <link rel="stylesheet" href="{% static 'mapas/plugins/L.Control.MousePosition.css' %}">
+        <link rel="stylesheet" href="{% static 'mapas/plugins/L.Control.Sidebar.css' %}">
+        <link rel="stylesheet" href="{% static 'mapas/plugins/Leaflet.PolylineMeasure.css' %}">
+        <link rel="stylesheet" href="{% static 'mapas/plugins/easy-button.css' %}">
+        <link rel="stylesheet" href="{% static 'mapas/plugins/leaflet-opencage/src/css/L.Control.OpenCageSearch.css' %}">
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    
+        <script src="{% static 'mapas/leaflet.wmslegend.js' %}"></script>
+        <link rel="stylesheet" src="{% static 'mapas/leaflet.wmslegend.css' %}"></link>
+        
+
+        <style type="text/css">
+        html, body { width: 100%; height: 100%; margin: 0; }
+        #map { width: 100%; height: 100%; }
+        .leaflet-control-layers{
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
+        }
+
+
+        .leaflet-layerstree-header-name{
+            padding-left: 3px;
+        }
+
+        .leaflet-control-layers-selector{
+            padding-right:10px;
+        }
+
+
+
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+        <a class="navbar-brand" href="/"><img src="{% static 'mapas/images/logo.svg' %}" width=150px alt="Logo"></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" href="/websig/">Websig</a></li>
+                <li class="nav-item"><a class="nav-link" href="/panorama/">Panorama</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Street View</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Fotos</a></li>
+            </ul>
+            <a href="/logout/" class="btn btn-outline-light">logout</a>
+        </div>
+
+</nav>
+ 
+    <div id="map"></div>
+    <link rel="stylesheet" href="{% static 'mapas/L.Control.Layers.Tree.css' %}"/>
+    <script src="{% static 'mapas/L.Control.Layers.Tree.js' %}"></script>
+
+    <script type="text/javascript">
+        var center = [-25.48744, -49.33771];
+
+
+
+        var osm = L.tileLayer(
+            '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            {attribution: 'ITTI © OpenStreetMap'}
+        );
+
+        //var esri =  L.tileLayer.provider('Esri.WorldImagery');
+
+        var esri = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'ITTI &copy; Esri',
+            opacity:0.6,
+        });
+
+        var esrilabel = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'ITTI &copy; Esri',
+            opacity:1,
+        });
+
+        var map = L.map('map', {
+            layers: [esri, esrilabel],
+            center: center,
+            zoom: 12,
+            opacity: 0.2
+        });
+
+        var baseTree = {
+            label: 'BASEMAP',
+            layers: [esri, esrilabel],
+            noShow: true,
+            children: [
+
+
+            {
+                label: 'Esri World Imagery',
+                layer: esri,
+                
+            },
+
+
+            {
+            label: 'Open Street Map',               
+            layer: osm, name: 'OpenStreeMap '
+             },
+
+
+
+
+            ]
+        };
+
+        var ctl = L.control.layers.tree(baseTree, null,
+            {
+                collapsed: false,
+                namedToggle: false,
+                collapsed: true,
+                autoZIndex: false,
+            });
+
+        ctl.addTo(map).collapseTree().expandSelected();
+
+        uri = "https://sistemas.itti.org.br/geoserver/Sanepar/wms?";
+        uri += "REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&";
+        uri += "LAYER=Sanepar%3AFluxo_de_drenagem&legend_options=fontName:Times%20New%20Roman;fontAntiAliasing:true;fontColor:0x000033;fontSize:14;bgColor:0xFFFFEE;dpi:80";
+
+            
+    //    L.wmsLegend(uri);
+
+        uri2 = "https://sistemas.itti.org.br/geoserver/Sanepar/wms?";
+        uri2 += "REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&";
+        uri2 += "LAYER=Sanepar%3AFluxo_de_drenagem&legend_options=fontName:Times%20New%20Roman;fontAntiAliasing:true;fontColor:0x000033;fontSize:14;bgColor:0xFFFFEE;dpi:80";
+
+            
+    //    L.wmsLegend(uri2);
+
+
+
+        var hasAllUnSelected = function() {
+            return function(ev, domNode, treeNode, map) {
+                var anySelected = false;
+                function iterate(node)
+                {
+                    if (node.layer && !node.radioGroup) {
+                        anySelected = anySelected || map.hasLayer(node.layer);
+                    }
+                    if (node.children && !anySelected) {
+                        node.children.forEach(function(element) { iterate(element); });
+                    }
+                }
+                iterate(treeNode);
+                return !anySelected;
+            };
+        };
+
+        function downloadgeral(){
+            var confirmar = confirm('Deseja fazer o download de Geral?')
+            if(confirmar){
+                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Canal extravasor - Rio Iguaçu&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Limites Municipais&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Hidrografia de interesse&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Rodovias do Paraná&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Reservatorios&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Hidrografia da bacia do alto Iguaçu&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Perímetro de atuação nos municípios&maxFeatures=50&outputFormat=SHAPE-ZIP');
+            }
+            else{
+
+            }  
+            };
+
+            function downloadwetlands(){
+                var confirmar = confirm('Deseja fazer o download Wetlands?')
+                if(confirmar){
+                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W01&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W02&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W03&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W04&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W05&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W06&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W07&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W08&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W09&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W10&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W11&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W12&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W13&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W14&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W15&maxFeatures=50&outputFormat=SHAPE-ZIP');
+
+                }
+                else{
+    
+                }  
+                };
+
+                function downloadreservasnaturais(){
+                    var confirmar = confirm('Deseja fazer o download Reservas Naturais?')
+                    if(confirmar){
+                        window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:RN01&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                        window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:RN02&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                        window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:RN03&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                        window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:RN04&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                        window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:RN05&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                        window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:RN06&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                        window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:RN07&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                        window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:RN08&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                        window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:RN09&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                        window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:RN10&maxFeatures=50&outputFormat=SHAPE-ZIP');
+    
+                    }
+                    else{
+        
+                    }  
+                    };
+    
+                    function downloadRGB(){
+                        var confirmar = confirm('Deseja fazer o download RGB?')
+                        if(confirmar){
+                            window.open('https://sistemas.itti.org.br/geoserver/Sanepar/wms?service=WMS&version=1.1.0&request=GetMap&layers=Sanepar%3ARN01%20-%20RGB&bbox=687254.3117608554%2C7184295.676875737%2C688719.2074288534%2C7185233.885247735&width=768&height=491&srs=EPSG%3A32722&styles=&format=image%2Ftiff');
+                            window.open('https://sistemas.itti.org.br/geoserver/Sanepar/wms?service=WMS&version=1.1.0&request=GetMap&layers=Sanepar%3ARN02%20-%20RGB&bbox=685957.1632702481%2C7184576.377800001%2C687294.5632702481%2C7185662.177800001&width=768&height=623&srs=EPSG%3A31982&styles=&format=image%2Ftiff');
+                            window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:RN03 - RGB&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                            window.open('https://sistemas.itti.org.br/geoserver/Sanepar/wms?service=WMS&version=1.1.0&request=GetMap&layers=Sanepar%3ARN04%20-%20RGB&bbox=683612.2094883772%2C7182661.997310112%2C684323.7094883772%2C7183432.147310113&width=709&height=768&srs=EPSG%3A31982&styles=&format=image%2Ftiff');
+                            window.open('https://sistemas.itti.org.br/geoserver/Sanepar/wms?service=WMS&version=1.1.0&request=GetMap&layers=Sanepar%3ARN06%20-%20RGB&bbox=683779.1008909196%2C7181691.5186490845%2C684220.4706253194%2C7182184.775599284&width=687&height=768&srs=EPSG%3A31982&styles=&format=image%2Ftiff');
+                            window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:RN07 - RGB&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                            window.open('https://sistemas.itti.org.br/geoserver/Sanepar/wms?service=WMS&version=1.1.0&request=GetMap&layers=Sanepar%3ARN09_RGB&bbox=668846.91374%2C7165102.285840001%2C672978.4731199995%2C7167424.189060001&width=768&height=431&srs=EPSG%3A32722&styles=&format=image%2Ftiff');
+                            window.open('https://sistemas.itti.org.br/geoserver/Sanepar/wms?service=WMS&version=1.1.0&request=GetMap&layers=Sanepar%3ARN10%20-%20RGB&bbox=667469.254710908%2C7164218.00816616%2C669060.2884684074%2C7165869.64738616&width=739&height=768&srs=EPSG%3A32722&styles=&format=image%2Ftiff');
+                            window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W01 - RGB&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                            window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W05 - RGB&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                            window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W07 - RGB&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                            window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W08 - RGB&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                            window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W15 - RGB&maxFeatures=50&outputFormat=SHAPE-ZIP');
+
+        
+                        }
+                        else{
+            
+                        }  
+                        };
+
+
+                        function downloadMDSDEM(){
+                            var confirmar = confirm('Deseja fazer o download MDS e DEM?')
+                            if(confirmar){
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:RN01 - DEM&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:RN02 - DEM&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:RN03 - DEM&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:RN04 - DEM&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:RN06 - DEM&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:RN07 - DEM&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:RN09 - DEM&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:RN10 - MDS&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W01 - DEM&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W06 - DEM&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W07 - DEM&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W09 - DEM&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W11 - DEM&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W13 - DEM&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W14B - DEM&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W14C- DEM&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:W15 - DEM&maxFeatures=50&outputFormat=SHAPE-ZIP');
+
+
+                            }
+                            else{
+                
+                            }  
+                            };
+
+                        function downloadNDVI(){
+                            var confirmar = confirm('Deseja fazer o download NDVI?')
+                            if(confirmar){
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=W01_NDVI&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=W07 - NDVI&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=W08B - NDVI&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=W13 - NDVI&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=W15 - DNVI&maxFeatures=50&outputFormat=SHAPE-ZIP');
+            
+                            }
+                            else{
+                
+                            }  
+                            };
+
+                            function downloadproduto2(){
+                                var confirmar = confirm('Deseja fazer o download Produto 2?')
+                                if(confirmar){
+                                    window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=AIERI - AREA DE INTERESSE ESPECIAL REGIONAL DO IGUACU&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                    window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Coberturas vegetais&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                    window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=DIRETRIZ DE INCLUSÃO DO PERÍMETRO DE VULNERABILIDADE - TR10000 COTA MÁXIMA MIRINGUAVA&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                    window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=PERIMETRO DE VULNERABILIDADE DO ALTO IGUACU TR 10000 COTA MAXIMA IRAI PIRAQUARA E PASSAUNA&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                    window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Parques existentes&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                    window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Parques previstos&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                    window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=REVEGETACAO DA APPS - AFLUENTES&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                    window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=REVEGETACAO DAS APPS - RIO IGUACU E CANAL EXTRAVASOR&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                    window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=ZONEAMENTO AIERI&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                    window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Área de abrangência da COALIAR&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                    window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Áreas preservação permanente&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                    window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=DIRETRIZ DE INCLUSÃO DO PERÍMETRO DE VULNERABILIDADE - TR10000 COTA MÁXIMA RIO VERDE&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                    window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=ETE Atuba&maxFeatures=50&outputFormat=SHAPE-ZIP");
+
+
+    
+                
+                                }
+                                else{
+                    
+                                }  
+                                };
+
+        
+                                function downloadproduto3(){
+                                    var confirmar = confirm('Deseja fazer o download Produto 3?')
+                                    if(confirmar){
+                                        window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=APP dentro do zoneamento AIERI&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                        window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Área de contribuição alto iguaçu&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                        window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Assentamentos - Uso habitacional proibido conforme Plano Diretor da AIERI&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                        window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Uso e cobertura do solo a partir do zoneamento AIERI&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                        window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Zoneamento Balsa Nova1&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                        window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Zoneamento Porto Amazonas&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                        window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Zoneamento de Contenda&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                        window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Zoneamento de Lapa&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                        window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Zoneamento de Pinhais&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                        window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Zoneamento da APA do Iguaçu&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                        window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Zoneamento de São José dos Pinhais&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                        window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Zoneamento de Piraquara&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                        window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Zoneamento de Fazenda Rio Grande&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                        window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Zoneamento Curitiba&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                        window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Zoneamento de Araucária&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                        window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Zoneamento Porto Amazonas&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                        window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Perímetro de atuação nos municípios&maxFeatures=50&outputFormat=SHAPE-ZIP");
+    
+
+                    
+                                    }
+                                    else{
+                        
+                                    }  
+                                    };
+    
+                        function downloadproduto4(){
+                            var confirmar = confirm('Deseja fazer o download Produto 4?')
+                            if(confirmar){
+                                window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Situação de matriculas RN's&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Situação de matriculas Wetland&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Situação de posse RN's&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Situação de posse Wetland&maxFeatures=50&outputFormat=SHAPE-ZIP');
+
+            
+                            }
+                            else{
+                
+                            }  
+                            };
+
+                            function downloadproduto5(){
+                                var confirmar = confirm('Deseja fazer o download Produto 5?')
+                                if(confirmar){
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Situação de imageamento da batimetria&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                 //   window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Curva de nível&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Fluxo de drenagem&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                 //   window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Batimetria_com_Seções&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                    window.open("https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Localização ETE's&maxFeatures=50&outputFormat=SHAPE-ZIP");
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Pontos de monitoramento do Iguaçu (SANEPAR)&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Pontos de qualidade da água SANEPAR_2025&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                  //  window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Pontos_de_Monitoramento_SANEPAR_iguaçu&maxFeatures=50&outputFormat=SHAPE-ZIP');   
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Pontos de monitoramento do Iguaçu (SANEPAR) 1&maxFeatures=50&outputFormat=SHAPE-ZIP');  
+                                }
+                                else{
+                    
+                                }  
+                                };
+
+                                
+                        function downloadproduto6(){
+                            var confirmar = confirm('Deseja fazer o download Produto 6?')
+                            if(confirmar){
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Acessos para Wetlands&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Estações fluviométricas identificadas&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Estações fluviométricas selecionadas&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Estações pluviométricas identificados&maxFeatures=50&outputFormat=SHAPE-ZIP');
+
+            
+                            }
+                            else{
+                
+                            }  
+                            };
+        
+                            function downloadproduto8(){
+                                var confirmar = confirm('Deseja fazer o download Produto 8?')
+                                if(confirmar){
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Vegetação da RN01&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Vegetação da RN02&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Vegetação da RN03&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Vegetação da RN04&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Vegetação da RN05&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Vegetação da RN06&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Vegetação da RN09&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Vegetação da RN10&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Vegetação da W01&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Vegetação da W02&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Vegetação da W06&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Vegetação da W07&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Vegetação da W08&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Vegetação da W09&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Vegetação da W10&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Vegetação da W11&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Vegetação da W12&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Vegetação da W13&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Vegetação da W14 - PARTE A&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Vegetação da W14 - PARTE B&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Vegetação da W15&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Vegetação da RN07 - 08/01/2025&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Vegetação da RN07 - 08/10/2024&maxFeatures=50&outputFormat=SHAPE-ZIP');
+                                    window.open('https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Sanepar:Vegetação da RN07 - 28/08/2024&maxFeatures=50&outputFormat=SHAPE-ZIP');
+
+                
+                                }
+                                else{
+                    
+                                }  
+                                };
+        var areas_geoserver = {
+            label: 'Produtos',
+            selectAllCheckbox: false,
+
+            children: [
+                /* start aiports from http://www.partow.net/miscellaneous/airportdatabase/#Download */
+
+                
+  //              {label: '<b>Limites Municipais</b>',
+ //                   selectAllCheckbox: false,
+ //                   layer: L.tileLayer.wms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:Limites Municipais',transparent: true,format: 'image/png'}),
+ //               },
+
+
+
+            
+
+                {label: '<b>GERAL</b> <img src="{% static 'mapas/images/download-icon.svg' %}" onclick="downloadgeral();" width=18px>',
+                    selectAllCheckbox: true,
+                    children: [
+                        {% for Geral in layers.Geral %}
+                            {label: "{{Geral}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{Geral}}',transparent: true, tile: true, format: 'image/png'})},
+                        {% endfor %}
+
+                        {label: '<b>Wetlands (W)</b><img src="{% static 'mapas/images/download-icon.svg' %}" onclick="downloadwetlands();" width=18px>',
+                           selectAllCheckbox: true,
+                           children: [
+                                {label: 'W01', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:W01',transparent: true,format: 'image/png'})},
+                                {label: 'W02', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:W02',transparent: true,format: 'image/png'})},
+                                {label: 'W03', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:W03',transparent: true,format: 'image/png'})},
+                                {label: 'W04', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:W04',transparent: true,format: 'image/png'})},
+                                {label: 'W05', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:W05',transparent: true,format: 'image/png'})},
+                                {label: 'W06', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:W06',transparent: true,format: 'image/png'})},
+                                {label: 'W07', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:W07',transparent: true,format: 'image/png'})},
+                                {label: 'W08', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:W08',transparent: true,format: 'image/png'})},
+                                {label: 'W09', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:W09',transparent: true,format: 'image/png'})},
+                                {label: 'W010', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:W10',transparent: true,format: 'image/png'})},
+                                {label: 'W011', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:W11',transparent: true,format: 'image/png'})},
+                                {label: 'W012', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:W12',transparent: true,format: 'image/png'})},
+                                {label: 'W013', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:W13',transparent: true,format: 'image/png'})},
+                                {label: 'W014', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:W14',transparent: true,format: 'image/png'})},
+                                {label: 'W015', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:W15',transparent: true,format: 'image/png'})},
+                            ]
+                        },
+
+                        {label: '<b>Reservas Naturais (RN)</b><img src="{% static 'mapas/images/download-icon.svg' %}" onclick="downloadreservasnaturais();" width=18px>',
+                            selectAllCheckbox: true,
+                            children: [
+                                {label: 'RN01', layer: L.tileLayer.betterWms("https://sistemas.itti.org.br//geoserver/Sanepar/wms?",{layers: 'Sanepar:RN01',transparent: true,tile: true, format: 'image/png'})},
+                                {label: 'RN02', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wfs?', {layers: 'Sanepar:RN02',transparent: true,tile: true, format: 'image/png'})},
+                                {label: 'RN03', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wfs?', {layers: 'Sanepar:RN03',transparent: true,tile: true, format: 'image/png'})},
+                                {label: 'RN04', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wfs?', {layers: 'Sanepar:RN04',transparent: true,tile: true, format: 'image/png'})},
+                                {label: 'RN05', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wfs?', {layers: 'Sanepar:RN05',transparent: true,tile: true, format: 'image/png'})},
+                                {label: 'RN06', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:RN06',transparent: true,tile: true, format: 'image/png'})},
+                                {label: 'RN07', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:RN07',transparent: true,tile: true, format: 'image/png'})},
+                                {label: 'RN08', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:RN08',transparent: true,tile: true, format: 'image/png'})},
+                                {label: 'RN09', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:RN09',transparent: true,tile: true, format: 'image/png'})},
+                                {label: 'RN10', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:RN10',transparent: true,tile: true, format: 'image/png'})},
+                            ]
+                        },
+                       
+                    ]
+                },
+                
+                {label: '<b>Lote 2</b>',
+
+
+                    children: [
+                
+                        {label: '<b>Produto 2</b><img src="{% static 'mapas/images/download-icon.svg' %}" onclick="downloadproduto2();" width=18px>',
+                            selectAllCheckbox: true,
+                            children: [
+                                                                                              
+                    {% for layer in layers.L2_P2 %}
+                        {label: "{{layer}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer}}',transparent: true, tile: true, format: 'image/png'})},
+                    {% endfor %}
+
+
+
+                        {label: '<b>RGB</b><img src="{% static 'mapas/images/download-icon.svg' %}" onclick="downloadRGB();" width=18px>',
+                           selectAllCheckbox: true,
+                           children: [
+                           {% for layer in layers.L2_P2__Produtos_RGB %}
+                                {label: "{{layer}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer}}',transparent: true, tile: true, format: 'image/png',maxZoom: 20})},
+                             {% endfor %}
+
+                            ]
+                        },
+
+                        {label: '<b>MDS e DEM</b><img src="{% static 'mapas/images/download-icon.svg' %}" onclick="downloadMDSDEM();" width=18px>',
+                           selectAllCheckbox: true,
+                           children: [
+                           {% for layer in layers.L2_P2__MDS %}
+                                {label: "{{layer}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer}}',transparent: true, tile: true, format: 'image/png', maxZoom: 25})},
+                             {% endfor %}
+
+                            ]
+                        },              
+
+                        {label: '<b>NDVI</b><img src="{% static 'mapas/images/download-icon.svg' %}" onclick="downloadNDVI();" width=18px>',
+                           selectAllCheckbox: true,
+                           children: [
+                            {% for layer in layers.L2_P2__Produtos_NDVI %}
+                                {label: "{{layer}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer}}',transparent: true, tile: true, format: 'image/png', maxZoom: 25})},
+                             {% endfor %}
+                        ]
+                        },       
+
+
+
+                    ]
+                },
+
+                {label: '<b>Produto 3</b><img src="{% static 'mapas/images/download-icon.svg' %}" onclick="downloadproduto3();" width=18px>',
+                    selectAllCheckbox: false,
+                    layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:L2 P3',transparent: true,format: 'image/png'}),
+                           children: [
+                            {% for layer in layers.L2_P3 %}
+                                {label: "{{layer}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer}}',transparent: true, tile: true, format: 'image/png', maxZoom: 25})},
+                            {% endfor %}
+
+                            ]
+                },
+
+                {label: '<b>Produto 4</b><img src="{% static 'mapas/images/download-icon.svg' %}" onclick="downloadproduto4();" width=18px>',
+                    selectAllCheckbox: false,
+                    layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:L2 P4',transparent: true,format: 'image/png'}),
+
+                    children: [
+                            {% for layer in layers.L2_P4 %}
+                                {label: "{{layer}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer}}',transparent: true, tile: true, format: 'image/png', maxZoom: 25})},
+                            {% endfor %}
+                ]
+
+                },
+
+                {label: '<b>Produto 5</b><img src="{% static 'mapas/images/download-icon.svg' %}" onclick="downloadproduto5();" width=18px>',
+                    selectAllCheckbox: false,
+                    layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:L2 P5',transparent: true,tile:true,format: 'image/png'}),
+                     children: [
+                            {% for layer in layers.L2_P5 %}
+                                {label: "{{layer}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer}}',transparent: true, tile: true, format: 'image/png', maxZoom: 25})},
+                            {% endfor %}
+                    ]
+                },
+
+                {label: '<b>Produto 6</b><img src="{% static 'mapas/images/download-icon.svg' %}" onclick="downloadproduto6();" width=18px>',
+                    selectAllCheckbox: false,
+                    layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: '	Sanepar:L2 P6',transparent: true,tile:true,format: 'image/png'}),
+                     children: [
+                            {% for layer in layers.L2_P6 %}
+                                {label: "{{layer}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer}}',transparent: true, tile: true, format: 'image/png', maxZoom: 25})},
+                            {% endfor %}
+                    ]
+                },
+
+    //            {label: '<b>Produto 7</b>',
+     //               selectAllCheckbox: true,
+  //                  layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:P7',transparent: true,tile:true,format: 'image/png'}),
+ //                    children: [
+ //                       {label: 'Seções', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:secoes',transparent: true,format: 'image/png'})},
+ //                       {label: 'Seções de interesse', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:Seções de interesse',transparent: true,tile:true,format: 'image/png'})},
+ //                       {label: 'Rio', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:rio',transparent: true,tile:true,format: 'image/png'})},
+ //                       {label: 'Flowpaths', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:flowpaths',transparent: true,tile:true,format: 'image/png'})},
+ //                       {label: 'Bancos', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:bancos',transparent: true,tile:true,format: 'image/png'})},
+ //                       {label: 'Seções de interesse', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:Seções de interesse',transparent: true,tile:true,format: 'image/png'})},
+ //                       {label: 'Pontos de verificação', layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:Pontos de verificação',transparent: true,tile:true,format: 'image/png'})},
+
+ //                   ]
+ //               },
+
+
+            {label: '<b>Produto 8</b><img src="{% static 'mapas/images/download-icon.svg' %}" onclick="downloadproduto8();" width=18px>',
+            selectAllCheckbox: false,
+            layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:L2 P8',transparent: true,tile:true,format: 'image/png'}),
+            children: [
+                   {% for layer in layers.L2_P8 %}
+                                {label: "{{layer}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer}}',transparent: true, tile: true, format: 'image/png', maxZoom: 25})},
+                   {% endfor %}
+            ]
+            },
+            ]
+        },
+                        
+                {label: '<b>Lote 3</b>',
+
+
+                children: [
+
+                
+                {label: '<b>Produto 3</b>',
+                    selectAllCheckbox: true,
+                     children: [
+                                                                                                                                                           
+                   {% for layer in layers.L3_P3 %}
+                                {label: "{{layer}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer}}',transparent: true, tile: true, format: 'image/png', maxZoom: 25})},
+                   {% endfor %}
+                    
+                    ]
+                },
+
+                {label: '<b>Produto 4</b>',
+                    selectAllCheckbox: true,
+                     children: [
+                    {% for layer in layers.L3_P4 %}
+                                {label: "{{layer}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer}}',transparent: true, tile: true, format: 'image/png'})},
+                   {% endfor %}                                                                                                                                        
+ 
+                    ]
+                },
+
+                {label: '<b>Produto 5</b>',
+                    selectAllCheckbox: true,
+                     children: [
+                                                                                                                                                           
+                    {% for layer in layers.L3_P5 %}
+                                {label: "{{layer}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer}}',transparent: true, tile: true, format: 'image/png'})},
+                   {% endfor %}    
+                    ]
+                },
+
+                {label: '<b>Produto 6</b>',
+                    selectAllCheckbox: true,
+                     children: [
+                                                                                                                                                           
+                    {% for layer in layers.L3_P6 %}
+                                {label: "{{layer}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer}}',transparent: true, tile: true, format: 'image/png'})},
+                   {% endfor %}    
+                    
+                    ]
+                },
+
+                ]
+                },
+            ]
+        };
+
+
+       // ctlZoomslider = L.control.zoomslider({position:'topleft'}).addTo(map);
+                
+        ctlMeasure = L.control.polylineMeasure().addTo(map);
+
+
+        var ctl2 = L.control.layers.tree(null, areas_geoserver,
+            {
+                namedToggle: false,
+                collapseAll: '[-] Minimizar',
+                expandAll: '[+] Expandir',
+                collapsed: false,
+                autoZIndex: false,
+                position: 'topleft',
+            });
+
+        ctl2.addTo(map).collapseTree().expandSelected();
+
+        /* ends aiports */
+        var makePopups = function(node) {
+            if (node.layer) {
+                node.layer.bindPopup(node.label);
+            }
+            if (node.children) {
+                node.children.forEach(function(element) { makePopups(element); });
+            }
+        };
+        makePopups(areas_geoserver);
+
+        ctl2.setOverlayTree(areas_geoserver).collapseTree(true).expandSelected(true);
+
+
+
+                $.ajax('https://sistemas.itti.org.br//geoserver/Sanepar/wfs?',{
+                    type: 'GET',
+                    data: {
+                      service: 'WFS',
+                      version: '1.1.0',
+                      request: 'GetFeature',
+                      typename: 'Sanepar:RN01',
+                      CQL_FILTER: "column='demo'",
+                      srsname: 'EPSG:4326',
+                      outputFormat: 'text/javascript',
+                      },
+                    dataType: 'jsonp',
+                    jsonpCallback:'callback:handleJson',
+                    jsonp:'format_options'
+                   });
+                    //Geojson style file
+                    var myStyle = {
+                      'color': 'red'
+                    }
+                  // the ajax callback function
+                  function handleJson(data) {
+                      selectedArea = L.geoJson(data, {
+                        style: myStyle,
+                        onEachFeature: function(feature, layer) {
+                          layer.bindPopup(`Name: ${feature.properties.name_of_your_property}`)
+                        }
+                      }).addTo(map);
+                    map.fitBounds(selectedArea.getBounds());
+                  }
+
+
+    </script>
+</body>
+</html>
