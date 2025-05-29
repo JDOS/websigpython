@@ -56,6 +56,32 @@
         .leaflet-control-layers-selector{
             padding-right:10px;
         }
+        
+.infobloco {
+  position: absolute;
+  bottom: 20px;
+  right: 0px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 6px 12px;
+  border-radius: 4px;
+  z-index: 1000;
+  max-width: 300px;       /* Limita a largura */
+  max-height: 200px;      /* Limita a altura */
+  overflow-y: auto;       /* Rolagem se o conteúdo ultrapassar a altura */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Visual mais elegante */
+}
+     .infobloco h2 {
+      margin-top: 0;
+      font-size: 18px;
+      color: #333;
+    }
+
+    #info {
+      font-size: 14px;
+      font-family: Arial, sans-serif;
+
+    }
+
 
 
 
@@ -112,8 +138,11 @@
             layers: [esri, esrilabel],
             center: center,
             zoom: 12,
-            opacity: 0.2
+            opacity: 0.2,
+            zoomControl: false  // Remove o controle padrão
         });
+
+
 
         var baseTree = {
             label: 'BASEMAP',
@@ -472,7 +501,7 @@
                     selectAllCheckbox: true,
                     children: [
                         {% for Geral in layers.Geral %}
-                            {label: "{{Geral.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{Geral.0}}',transparent: true, tile: true, format: 'image/png'})},
+                            {label: "{{Geral.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{Geral.0}}',transparent: true, tile: true, format: 'image/png', title:'{{Geral.1}}'})},
                         {% endfor %}
 
                         {label: '<b>Wetlands (W)</b><img src="{% static 'mapas/images/download-icon.svg' %}" onclick="downloadwetlands();" width=18px>',
@@ -525,7 +554,7 @@
                             children: [
                                                                                               
                     {% for layer in layers.L2_P2 %}
-                        {label: "{{layer.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer.0}}',transparent: true, tile: true, format: 'image/png'})},
+                        {label: "{{layer.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer.0}}',transparent: true, tile: true, format: 'image/png', title:'{{layer.1}}'})},
                     {% endfor %}
 
 
@@ -534,7 +563,7 @@
                            selectAllCheckbox: true,
                            children: [
                            {% for layer in layers.L2_P2__Produtos_RGB %}
-                                {label: "{{layer.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer.0}}',transparent: true, tile: true, format: 'image/png',maxZoom: 20})},
+                                {label: "{{layer.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer.0}}',transparent: true, tile: true, format: 'image/png',maxZoom: 20, title:'{{layer.1}}'})},
                              {% endfor %}
 
                             ]
@@ -544,7 +573,7 @@
                            selectAllCheckbox: true,
                            children: [
                            {% for layer in layers.L2_P2__MDS %}
-                                {label: "{{layer.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer.0}}',transparent: true, tile: true, format: 'image/png', maxZoom: 25})},
+                                {label: "{{layer.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer.0}}',transparent: true, tile: true, format: 'image/png', maxZoom: 25, title:'{{layer.1}}'})},
                              {% endfor %}
 
                             ]
@@ -554,7 +583,7 @@
                            selectAllCheckbox: true,
                            children: [
                             {% for layer in layers.L2_P2__Produtos_NDVI %}
-                                {label: "{{layer.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer.0}}',transparent: true, tile: true, format: 'image/png', maxZoom: 25})},
+                                {label: "{{layer.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer.0}}',transparent: true, tile: true, format: 'image/png', maxZoom: 25, title:'{{layer.1}}'})},
                              {% endfor %}
                         ]
                         },       
@@ -569,7 +598,7 @@
                     layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:L2 P3',transparent: true,format: 'image/png'}),
                            children: [
                             {% for layer in layers.L2_P3 %}
-                                {label: "{{layer.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer.0}}',transparent: true, tile: true, format: 'image/png', maxZoom: 25})},
+                                {label: "{{layer.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer.0}}',transparent: true, tile: true, format: 'image/png', maxZoom: 25, title:'{{layer.1}}'})},
                             {% endfor %}
 
                             ]
@@ -577,11 +606,11 @@
 
                 {label: '<b>Produto 4</b><img src="{% static 'mapas/images/download-icon.svg' %}" onclick="downloadproduto4();" width=18px>',
                     selectAllCheckbox: false,
-                    layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:L2 P4',transparent: true,format: 'image/png'}),
+                    layer: L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {layers: 'Sanepar:L2 P4',transparent: true,format: 'image/png', title:'{{layer.1}}'}),
 
                     children: [
                             {% for layer in layers.L2_P4 %}
-                                {label: "{{layer.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer.0}}',transparent: true, tile: true, format: 'image/png', maxZoom: 25})},
+                                {label: "{{layer.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer.0}}',transparent: true, tile: true, format: 'image/png', maxZoom: 25, title:'{{layer.1}}'})},
                             {% endfor %}
                 ]
 
@@ -589,10 +618,10 @@
 
                 {label: '<b>Produto 5</b><img src="{% static 'mapas/images/download-icon.svg' %}" onclick="downloadproduto5();" width=18px>',
                     selectAllCheckbox: false,
-                    layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:L2 P5',transparent: true,tile:true,format: 'image/png'}),
+                    layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:L2 P5',transparent: true,tile:true,format: 'image/png', title:'{{layer.1}}'}),
                      children: [
                             {% for layer in layers.L2_P5 %}
-                                {label: "{{layer.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer.0}}',transparent: true, tile: true, format: 'image/png', maxZoom: 25})},
+                                {label: "{{layer.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer.0}}',transparent: true, tile: true, format: 'image/png', maxZoom: 25, title:'{{layer.1}}'})},
                             {% endfor %}
                     ]
                 },
@@ -602,7 +631,7 @@
                     layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: '	Sanepar:L2 P6',transparent: true,tile:true,format: 'image/png'}),
                      children: [
                             {% for layer in layers.L2_P6 %}
-                                {label: "{{layer.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer.0}}',transparent: true, tile: true, format: 'image/png', maxZoom: 25})},
+                                {label: "{{layer.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer.0}}',transparent: true, tile: true, format: 'image/png', maxZoom: 25, title:'{{layer.1}}'})},
                             {% endfor %}
                     ]
                 },
@@ -628,7 +657,7 @@
             layer: L.tileLayer.betterWms('https://sistemas.itti.org.br//geoserver/Sanepar/wms?', {layers: 'Sanepar:L2 P8',transparent: true,tile:true,format: 'image/png'}),
             children: [
                    {% for layer in layers.L2_P8 %}
-                                {label: "{{layer.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer.0}}',transparent: true, tile: true, format: 'image/png', maxZoom: 25})},
+                                {label: "{{layer.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer.0}}',transparent: true, tile: true, format: 'image/png', maxZoom: 25, title:'{{layer.1}}'})},
                    {% endfor %}
             ]
             },
@@ -646,7 +675,7 @@
                      children: [
                                                                                                                                                            
                    {% for layer in layers.L3_P3 %}
-                                {label: "{{layer.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer.0}}',transparent: true, tile: true, format: 'image/png', maxZoom: 25})},
+                                {label: "{{layer.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer.0}}',transparent: true, tile: true, format: 'image/png', maxZoom: 25, title:'{{layer.1}}'})},
                    {% endfor %}
                     
                     ]
@@ -656,7 +685,7 @@
                     selectAllCheckbox: true,
                      children: [
                     {% for layer in layers.L3_P4 %}
-                                {label: "{{layer.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer.0}}',transparent: true, tile: true, format: 'image/png'})},
+                                {label: "{{layer.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer.0}}',transparent: true, tile: true, format: 'image/png', title:'{{layer.1}}'})},
                    {% endfor %}                                                                                                                                        
  
                     ]
@@ -667,7 +696,7 @@
                      children: [
                                                                                                                                                            
                     {% for layer in layers.L3_P5 %}
-                                {label: "{{layer.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer.0}}',transparent: true, tile: true, format: 'image/png'})},
+                                {label: "{{layer.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer.0}}',transparent: true, tile: true, format: 'image/png', title:'{{layer.1}}'})},
                    {% endfor %}    
                     ]
                 },
@@ -677,7 +706,7 @@
                      children: [
                                                                                                                                                            
                     {% for layer in layers.L3_P6 %}
-                                {label: "{{layer.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer.0}}',transparent: true, tile: true, format: 'image/png'})},
+                                {label: "{{layer.1}}", layer: L.tileLayer.betterWms('{{wms}}', {layers: '{{layer.0}}',transparent: true, tile: true, format: 'image/png', title:'{{layer.1}}'})},
                    {% endfor %}    
                     
                     ]
@@ -689,9 +718,12 @@
         };
 
 
-       // ctlZoomslider = L.control.zoomslider({position:'topleft'}).addTo(map);
+       //ctlZoomslider = L.control.zoomslider({position:'topleft'}).addTo(map);
+        L.control.zoom({
+            position: 'topright'
+        }).addTo(map);
                 
-        ctlMeasure = L.control.polylineMeasure().addTo(map);
+        ctlMeasure = L.control.polylineMeasure({position: 'topright'}).addTo(map);
 
 
         var ctl2 = L.control.layers.tree(null, areas_geoserver,
@@ -751,7 +783,13 @@
                     map.fitBounds(selectedArea.getBounds());
                   }
 
-
     </script>
+
+    <div class="infobloco">
+      <h2>Legenda</h2>
+       <div><img id="legend"/></div>
+       <div id="info">&nbsp; <i>[Click sobre a camada para mais detalhes]</i></div>
+
+    </div>
 </body>
 </html>

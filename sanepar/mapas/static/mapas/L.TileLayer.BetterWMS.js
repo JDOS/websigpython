@@ -3,6 +3,7 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
     onAdd: function (map) {
       // Triggered when the layer is added to a map.
       //   Register a click listener, then do all the upstream WMS things
+     //   console.log(this.options.title); // se você passou title nas options
       L.TileLayer.WMS.prototype.onAdd.call(this, map);
       map.on('click', this.getFeatureInfo, this);
     },
@@ -18,6 +19,7 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
       // Make an AJAX request to the server and hope for the best
       var url = this.getFeatureInfoUrl(evt.latlng),
           showResults = L.Util.bind(this.showGetFeatureInfo, this);
+          console.log(url);
       $.ajax({
         url: url,
         success: function (data, status, xhr) {
@@ -89,22 +91,37 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
     },
     
     showGetFeatureInfo: function (err, latlng, content) {
+      var infoDiv = document.getElementById('info');
       if (err) { 
         console.log(err);
+        infoDiv.innerHTML = '<i style="color: red;">Erro ao obter informações</i>';
 
          return;
-         } // do nothing if there's an error
+         }
+
+
+         if (!content || !content.features || content.features.length === 0) {
+        infoDiv.innerHTML = '<i>[Nenhuma informação encontrada]</i>';
+        return;
+         } 
+    // do nothing if there's an error
          //console.log(content);
-         console.log(content);
+        // console.log(content);
          // Remover as tags <style> e seu conteúdo do texto
        // var cleanedHtmlString = content.replace(/<style[^>]*>.*?<\/style>/gs, "<style>tr { display: block; float: left; } th, td { display: block; border: 1px solid white; } tr>*:not(:first-child) { border-top: 0; } tr:not(:first-child)>* { border-left:0; }</style>");
         let text = "";
+        
+        if (this.options.title) {
+        text += "<h5>" + this.options.title + "</h5>";
+         }
+
         for (let i = 0; i<content.features.length; i++){
-            console.log(content.features[i].id.split('.')[0]);
-            let titulo = content.features[i].id.split('.')[0];
-            if (titulo !=''){
-                text+="<h4>"+titulo+"</h4>";
-            }
+           // console.log(content.features[i].id.split('.')[0]);
+           //antigo modo de por titulo
+            // let titulo = content.features[i].id.split('.')[0];
+            // if (titulo !=''){
+            //     text+="<h4>"+this.options.title+"</h4>";
+            // }
             for (const x in content.features[i].properties) {
                 let valor = content.features[i].properties[x];
                 if (valor!=null || valor != '' || valor!='null') {
@@ -117,12 +134,15 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
     if (text==''){
         return
     }
+
+    infoDiv.innerHTML = text;
       // Otherwise show the content in a popup, or something.
-      L.popup({ minWidth:300, maxWidth: 800, maxHeight: 500})
-        .setLatLng(latlng)
-        .setContent(text)
-        .openOn(this._map);
-    }
+    //   L.popup({ minWidth:300, maxWidth: 800, maxHeight: 500})
+    //     .setLatLng(latlng)
+    //     .setContent(text)
+    //     .openOn(this._map);
+    
+     }
 
 
 
