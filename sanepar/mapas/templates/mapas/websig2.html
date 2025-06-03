@@ -42,7 +42,7 @@
 
         <style type="text/css">
         html, body { width: 100%; height: 100%; margin: 0; }
-        #map { width: 100%; height: 100%; }
+        #map { width: 100%; height: 93%; }
         .leaflet-control-layers{
             font-family: Arial, Helvetica, sans-serif;
             font-size: 14px;
@@ -65,19 +65,19 @@
   padding: 6px 12px;
   border-radius: 4px;
   z-index: 1000;
-  max-width: 300px;       /* Limita a largura */
-  max-height: 200px;      /* Limita a altura */
-  overflow-y: auto;       /* Rolagem se o conteúdo ultrapassar a altura */
+  max-width: 500px;       /* Limita a largura */
+  max-height: 400px;      /* Limita a altura */
+  overflow-y: auto;        /* Rolagem se o conteúdo ultrapassar a altura */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Visual mais elegante */
 }
-     .infobloco h2 {
+     .infobloco h4 {
       margin-top: 0;
-      font-size: 18px;
+      font-size: 14px;
       color: #333;
     }
 
     #info {
-      font-size: 14px;
+      font-size: 12px;
       font-family: Arial, sans-serif;
 
     }
@@ -786,7 +786,7 @@
     </script>
 
     <div class="infobloco">
-      <h2>Legenda</h2>
+      <h4>Legenda</h4>
        <div><img id="legend"/></div>
        <div id="info">&nbsp; <i>[Click sobre a camada para mais detalhes]</i></div>
 

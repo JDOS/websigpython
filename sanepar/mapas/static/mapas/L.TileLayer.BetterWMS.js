@@ -37,7 +37,17 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
       // Construct a GetFeatureInfo request URL given a point
       var point = this._map.latLngToContainerPoint(latlng, this._map.getZoom()),
           size = this._map.getSize(),
-          
+          bounds = this._map.getBounds(),
+      version = this.wmsParams.version,
+      crsParam = version === '1.3.0' ? 'crs' : 'srs',
+      bbox = bounds.toBBoxString();
+
+  // For WMS 1.3.0 and EPSG:4326, swap bbox order
+  if (version === '1.3.0' && this.wmsParams[crsParam] === 'EPSG:4326') {
+    var sw = bounds.getSouthWest();
+    var ne = bounds.getNorthEast();
+    bbox = [sw.lat, sw.lng, ne.lat, ne.lng].join(',');
+  }
           params = {
             request: 'GetFeatureInfo',
             service: 'WMS',
@@ -55,8 +65,8 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
             info_format: 'application/json'
           };
       
-      params[params.version === '1.3.0' ? 'i' : 'x'] = point.x;
-      params[params.version === '1.3.0' ? 'j' : 'y'] = point.y;
+      params[params.version === '1.3.0' ? 'i' : 'x'] = Math.round(point.x);
+      params[params.version === '1.3.0' ? 'j' : 'y'] =Math.round(point.y);
       
       // return this._url + L.Util.getParamString(params, this._url, true);
       
@@ -109,10 +119,14 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
         // console.log(content);
          // Remover as tags <style> e seu conteúdo do texto
        // var cleanedHtmlString = content.replace(/<style[^>]*>.*?<\/style>/gs, "<style>tr { display: block; float: left; } th, td { display: block; border: 1px solid white; } tr>*:not(:first-child) { border-top: 0; } tr:not(:first-child)>* { border-left:0; }</style>");
-        let text = "";
+        var graphicUrl = 'https://sistemas.itti.org.br/geoserver/ows?service=WMS&version=1.1.0&request=GetLegendGraphic&layer='+this.options.layers+'&format=image/png';
+        const img = document.getElementById('legend');
+        img.src = graphicUrl;
+
+       let text = "";
         
         if (this.options.title) {
-        text += "<h5>" + this.options.title + "</h5>";
+        text += "<h4 style='font-size:18px;'><b>" + this.options.title + "</b></h4>";
          }
 
         for (let i = 0; i<content.features.length; i++){
