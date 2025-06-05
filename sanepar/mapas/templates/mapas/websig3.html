@@ -1017,14 +1017,11 @@ const select0 = document.getElementById('multiSelectInput0');
 
      const leafletLayers = [];
   // Evento de mudança
-  select0.addEventListener('addItem', function() {
+
+
+ select0.addEventListener('addItem', function() {
 
   const selectedValues = multiSelect0.getValue(true);
-  console.log(selectedValues);
-
- select2.addEventListener('addItem', function() {
-
-  const selectedValues = multiSelect2.getValue(true);
   console.log(selectedValues);
 
 // Adiciona apenas as layers que ainda não existem
@@ -1047,6 +1044,10 @@ const select0 = document.getElementById('multiSelectInput0');
   });
 });
 
+  select.addEventListener('addItem', function() {
+
+  const selectedValues = multiSelect.getValue(true);
+  console.log(selectedValues);
 // Adiciona apenas as layers que ainda não existem
   selectedValues.forEach(layerName => {
     // Verifica se já existe
