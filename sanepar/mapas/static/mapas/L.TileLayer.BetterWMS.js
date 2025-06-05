@@ -138,6 +138,12 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
             // }
             for (const x in content.features[i].properties) {
                 let valor = content.features[i].properties[x];
+
+                if(x.toUpperCase()=="ÁREA_M²" || x.toUpperCase()=="AREAM2" ){
+                  console.log("converter:",valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                  valor =valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                }
+
                 if (valor!=null || valor != '' || valor!='null') {
                     text += "<b>"+x.toUpperCase()+"</b>" +":"+ valor + "<br>";
                 }

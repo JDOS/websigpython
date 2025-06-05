@@ -85,29 +85,84 @@
 
     }
 
-.selectLayers {
-  position: absolute;
-  bottom: 200px;
-  left: 0px;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 6px 12px;
-  border-radius: 4px;
-  z-index: 1000;
-  max-width: 500px;       /* Limita a largura */
-  max-height: 400px;
-  height: 250px; 
-  width:400px;     /* Limita a altura */
-       /* Rolagem se o conteúdo ultrapassar a altura */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Visual mais elegante */
-}
+
+        .selectLayers {
+        position: relative;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 2px 2px;
+        font-size: 8px; 
+        z-index: 1000;      /* Limita a largura */
+        width:340px;     /* Limita a altura */
+            /* Rolagem se o conteúdo ultrapassar a altura */
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Visual mais elegante */
+        }
 
      .selectLayers h4 {
       margin-top: 0;
-      font-size: 18px;
-      color: #333;
+      font-size: 16px;
+      color: #00226d;
     }
 
+.choices__list--dropdown .choices__item, .choices__list[aria-expanded] .choices__item {
+    font-size: 12px;
+  }
 
+  .choices__heading {
+    border-bottom: 2px solid #035395;
+    border-bottom: 2px solid ;
+    font-size: 14px;
+    color: rgb(255, 255, 255);
+    background-color: #035395;
+  }
+
+.sidebar {
+     z-index: 1001;
+      position: fixed;
+      left: 0;
+      top: 7vh;
+      width: 350px;
+      height: 93vh;
+      background: #212529;
+      color:#212529;
+      display: flex;
+      flex-direction: column;
+    }
+    .tabs {
+      display: flex;
+      flex-direction: row;
+      border-bottom: 1px solid #002292af;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 16px;
+      background: none;
+      border: none;
+      color: #fff;
+      text-align: center;
+      cursor: pointer;
+      outline: none;
+      transition: background 0.2s;
+      border-right: 1px solid #444;
+    }
+    .tab-btn:last-child {
+      border-right: none;
+    }
+    .tab-btn.active, .tab-btn:hover {
+      background: #ffffffb7;
+    }
+.tab-content {
+      flex: 1;
+      padding: 5px;
+      display: none;
+      background: #ffffff;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .main-content {
+      margin-left: 350px;
+      padding: 40px;
+    }
     </style>
 </head>
 
@@ -160,6 +215,8 @@
         var map = L.map('map', {
             layers: [esri, esrilabel],
             center: center,
+            minZoom: 8,
+            maxZoom: 22,
             zoom: 12,
             opacity: 0.2,
             zoomControl: false  // Remove o controle padrão
@@ -808,41 +865,51 @@
 
     </script>
 
-
-
-
-    <div class="infobloco">
+ <div class="infobloco">
       <h4>Legenda</h4>
        <div><img id="legend"/></div>
        <div id="info">&nbsp; <i>[Click sobre a camada para mais detalhes]</i></div>
     </div>
 
+<div class="sidebar">
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="tab0">Geral</button>
+      <button class="tab-btn" data-tab="tab1">Lote 2</button>
+      <button class="tab-btn" data-tab="tab2">Lote 3</button>
+    </div>
+
+    <div id="tab0" class="tab-content active">
+        <select id="multiSelectInput0" multiple>
+            <optgroup  label="Geral">
+            {% for Geral in layers.Geral %}
+                <option value="{{Geral.0}}">{{Geral.1}}</option>
+            {% endfor %}
+            </optgroup>
+        </select>
+    </div>
+
+    <div id="tab1" class="tab-content">
+
     <div class="selectLayers">
-        <h4>Produtos</h4>
+        <h4>Camadas</h4>
       
         <select id="multiSelectInput" multiple>
-              <optgroup  style="color: black; font-size: 14px;" label="Geral">
-                {% for Geral in layers.Geral %}
-                    <option value="{{Geral.0}}">{{Geral.1}}</option>
-                {% endfor %}
-              </optgroup>
-
-        <optgroup style="color: black; font-size: 14px;" label="Lote 2"> 
+             
             <optgroup label="Produto 2">
                     {% for layer in layers.L2_P2 %}
                        <option value="{{layer.0}}">{{layer.1}}</option>
                     {% endfor %}
-            <optgroup label="RGB">
+            <optgroup label=" Produto 2 - RGB">
                     {% for layer in layers.L2_P2__Produtos_RGB %}
-                       <option value="{{layer.0}}">{{layer.1}}</option>
+                       <option value="{{layer.0}}">{{layer.1}}<img src="{% static 'mapas/images/download-icon.svg' %}"></img></option>
                     {% endfor %}
             </optgroup>
-             <optgroup label="MDS e DEM">
+             <optgroup label="Produto 2 - MDS e DEM">
                     {% for layer in layers.L2_P2__MDS %}
                        <option value="{{layer.0}}">{{layer.1}}</option>
                     {% endfor %}
             </optgroup>
-             <optgroup label="NVDI">
+             <optgroup label="Produto 2 - NVDI">
                     {% for layer in layers.L2_P2__Produtos_NDVI %}
                        <option value="{{layer.0}}">{{layer.1}}</option>
                     {% endfor %}
@@ -879,19 +946,49 @@
                     {% endfor %}
             </optgroup>
 
-    
-        <optgroup label="z Lote 3">
-                    {% for layer in layers.L3_P3 %}
-                       <option value="{{layer.0}}">{{layer.1}}</option>
-                    {% endfor %}
-        </optgroup>
-
        </select>
     </div>
 
 
+    </div>
+    <div id="tab2" class="tab-content">
+    <div class="selectLayers">
+        <h4>Camadas</h4>
+        <select id="multiSelectInput2" multiple>
+              <optgroup label="Lote 3">
+                    {% for layer in layers.L3_P3 %}
+                       <option value="{{layer.0}}">{{layer.1}}</option>
+                    {% endfor %}
+        </optgroup>
+    </div>
+  </div>
+  <script>
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Remove active de todos
+        tabButtons.forEach(b => b.classList.remove('active'));
+        tabContents.forEach(tc => tc.classList.remove('active'));
+        // Ativa o clicado
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
+      });
+    });
+  </script>
+
 
 <script>
+
+  const multiSelect0 = new Choices('#multiSelectInput0', {
+    removeItemButton: true,
+    placeholderValue: 'Selecione as Camadas...',
+    searchPlaceholderValue: 'Buscar...',
+    noResultsText: 'Nenhum resultado encontrado',
+    noChoicesText: 'Sem opções disponíveis',
+    itemSelectText: '',
+  });
 
   const multiSelect = new Choices('#multiSelectInput', {
     removeItemButton: true,
@@ -899,15 +996,35 @@
     searchPlaceholderValue: 'Buscar...',
     noResultsText: 'Nenhum resultado encontrado',
     noChoicesText: 'Sem opções disponíveis',
+    itemSelectText: '',
+
   });
 
+
+    const multiSelect2 = new Choices('#multiSelectInput2', {
+    removeItemButton: true,
+    placeholderValue: 'Selecione as Camadas...',
+    searchPlaceholderValue: 'Buscar...',
+    noResultsText: 'Nenhum resultado encontrado',
+    noChoicesText: 'Sem opções disponíveis',
+    itemSelectText: '',
+
+  });
+
+const select0 = document.getElementById('multiSelectInput0');
   const select = document.getElementById('multiSelectInput');
+  const select2 = document.getElementById('multiSelectInput2');
 
      const leafletLayers = [];
   // Evento de mudança
-  select.addEventListener('addItem', function() {
+  select0.addEventListener('addItem', function() {
 
-  const selectedValues = multiSelect.getValue(true);
+  const selectedValues = multiSelect0.getValue(true);
+  console.log(selectedValues);
+
+ select2.addEventListener('addItem', function() {
+
+  const selectedValues = multiSelect2.getValue(true);
   console.log(selectedValues);
 
 // Adiciona apenas as layers que ainda não existem
@@ -919,6 +1036,52 @@
         transparent: true,
         tile: true, 
         format: 'image/png',
+        maxZoom: 22,
+      }).addTo(map);
+
+      leafletLayers.push({
+        name: layerName,
+        layer: wmsLayer
+      });
+    }
+  });
+});
+
+// Adiciona apenas as layers que ainda não existem
+  selectedValues.forEach(layerName => {
+    // Verifica se já existe
+    if (!leafletLayers.find(item => item.name === layerName)) {
+      const wmsLayer = L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {
+        layers: layerName,
+        transparent: true,
+        tile: true, 
+        format: 'image/png',
+        maxZoom: 22,
+      }).addTo(map);
+
+      leafletLayers.push({
+        name: layerName,
+        layer: wmsLayer
+      });
+    }
+  });
+});
+
+  select2.addEventListener('addItem', function() {
+
+  const selectedValues = multiSelect2.getValue(true);
+  console.log(selectedValues);
+
+// Adiciona apenas as layers que ainda não existem
+  selectedValues.forEach(layerName => {
+    // Verifica se já existe
+    if (!leafletLayers.find(item => item.name === layerName)) {
+      const wmsLayer = L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {
+        layers: layerName,
+        transparent: true,
+        tile: true, 
+        format: 'image/png',
+        maxZoom: 22,
       }).addTo(map);
 
       leafletLayers.push({
@@ -937,6 +1100,11 @@ function removeLayerByName(name) {
   }
 }
 
+document.getElementById('multiSelectInput0').addEventListener('removeItem', function(event) {
+  console.log('Item removido:', event.detail.value);
+  removeLayerByName(event.detail.value);
+
+});
 
 document.getElementById('multiSelectInput').addEventListener('removeItem', function(event) {
   console.log('Item removido:', event.detail.value);
@@ -944,6 +1112,11 @@ document.getElementById('multiSelectInput').addEventListener('removeItem', funct
 
 });
 
+document.getElementById('multiSelectInput2').addEventListener('removeItem', function(event) {
+  console.log('Item removido:', event.detail.value);
+  removeLayerByName(event.detail.value);
+
+});
 
 </script>
 

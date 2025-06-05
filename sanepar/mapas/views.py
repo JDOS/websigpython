@@ -39,7 +39,7 @@ def websig(request):
     layers = list_produts
     wms_link_download = "https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.1.1&request=GetFeature&typeName="
     wms_link="https://sistemas.itti.org.br/geoserver/Sanepar/wms?"
-    return render(request, "mapas/websig2.html", {"layers":layers,"wms":wms_link,"link_download":wms_link_download})
+    return render(request, "mapas/websig3.html", {"layers":layers,"wms":wms_link,"link_download":wms_link_download})
 
 def streetview(request):
     context = {}
