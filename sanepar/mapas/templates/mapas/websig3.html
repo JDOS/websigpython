@@ -84,7 +84,13 @@
       font-family: Arial, sans-serif;
 
     }
-
+    
+#container img {
+  display: inline-block;
+  margin: 5px; /* opcional */
+  max-width: 150px;
+  height: auto;
+}
 
         .selectLayers {
         position: relative;
@@ -868,6 +874,7 @@
  <div class="infobloco">
       <h4>Legenda</h4>
        <div><img id="legend"/></div>
+       <div id="container"></div>
        <div id="info">&nbsp; <i>[Click sobre a camada para mais detalhes]</i></div>
     </div>
 
@@ -891,8 +898,6 @@
     <div id="tab1" class="tab-content">
 
     <div class="selectLayers">
-        <h4>Camadas</h4>
-      
         <select id="multiSelectInput" multiple>
              
             <optgroup label="Produto 2">
@@ -901,7 +906,7 @@
                     {% endfor %}
             <optgroup label=" Produto 2 - RGB">
                     {% for layer in layers.L2_P2__Produtos_RGB %}
-                       <option value="{{layer.0}}">{{layer.1}}<img src="{% static 'mapas/images/download-icon.svg' %}"></img></option>
+                       <option value="{{layer.0}}">{{layer.1}}</option>
                     {% endfor %}
             </optgroup>
              <optgroup label="Produto 2 - MDS e DEM">
@@ -953,7 +958,6 @@
     </div>
     <div id="tab2" class="tab-content">
     <div class="selectLayers">
-        <h4>Camadas</h4>
         <select id="multiSelectInput2" multiple>
               <optgroup label="Lote 3">
                     {% for layer in layers.L3_P3 %}
@@ -1017,12 +1021,14 @@ const select0 = document.getElementById('multiSelectInput0');
 
      const leafletLayers = [];
   // Evento de mudança
+const container = document.getElementById('container');
 
-
- select0.addEventListener('addItem', function() {
+ select0.addEventListener('addItem', function(event) {
 
   const selectedValues = multiSelect0.getValue(true);
+  const selectedText = event.detail.label;
   console.log(selectedValues);
+  console.log("Titulo",selectedText);
 
 // Adiciona apenas as layers que ainda não existem
   selectedValues.forEach(layerName => {
@@ -1036,9 +1042,16 @@ const select0 = document.getElementById('multiSelectInput0');
         maxZoom: 22,
       }).addTo(map);
 
+        const legend_img = document.createElement('img');
+        legend_img.src = 'https://sistemas.itti.org.br/geoserver/ows?service=WMS&version=1.1.0&request=GetLegendGraphic&layer='+layerName+'&format=image/png';
+        legend_img.alt = layerName;
+        legend_img.id = layerName;
+        container.appendChild(legend_img);
+
       leafletLayers.push({
         name: layerName,
-        layer: wmsLayer
+        layer: wmsLayer,
+        legend: legend_img,
       });
     }
   });
@@ -1060,9 +1073,16 @@ const select0 = document.getElementById('multiSelectInput0');
         maxZoom: 22,
       }).addTo(map);
 
+        const legend_img = document.createElement('img');
+        legend_img.src = 'https://sistemas.itti.org.br/geoserver/ows?service=WMS&version=1.1.0&request=GetLegendGraphic&layer='+layerName+'&format=image/png';
+        legend_img.alt = layerName;
+        legend_img.id = layerName;
+        container.appendChild(legend_img);
+
       leafletLayers.push({
         name: layerName,
-        layer: wmsLayer
+        layer: wmsLayer,
+        legend: legend_img,
       });
     }
   });
@@ -1085,9 +1105,16 @@ const select0 = document.getElementById('multiSelectInput0');
         maxZoom: 22,
       }).addTo(map);
 
+        const legend_img = document.createElement('img');
+        legend_img.src = 'https://sistemas.itti.org.br/geoserver/ows?service=WMS&version=1.1.0&request=GetLegendGraphic&layer='+layerName+'&format=image/png';
+        legend_img.alt = layerName;
+        legend_img.id = layerName;
+        container.appendChild(legend_img);
+
       leafletLayers.push({
         name: layerName,
-        layer: wmsLayer
+        layer: wmsLayer,
+        legend: legend_img,
       });
     }
   });
@@ -1101,22 +1128,30 @@ function removeLayerByName(name) {
   }
 }
 
+function removerImagem(id) {
+    const img = document.getElementById(id);
+    if (img) {
+      img.remove();
+    }
+  }
+
 document.getElementById('multiSelectInput0').addEventListener('removeItem', function(event) {
   console.log('Item removido:', event.detail.value);
   removeLayerByName(event.detail.value);
+  removerImagem(event.detail.value);
 
 });
 
 document.getElementById('multiSelectInput').addEventListener('removeItem', function(event) {
   console.log('Item removido:', event.detail.value);
   removeLayerByName(event.detail.value);
-
+  removerImagem(event.detail.value);
 });
 
 document.getElementById('multiSelectInput2').addEventListener('removeItem', function(event) {
   console.log('Item removido:', event.detail.value);
   removeLayerByName(event.detail.value);
-
+  removerImagem(event.detail.value);
 });
 
 </script>
