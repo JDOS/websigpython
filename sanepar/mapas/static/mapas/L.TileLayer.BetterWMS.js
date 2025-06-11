@@ -6,6 +6,7 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
      //   console.log(this.options.title); // se você passou title nas options
       L.TileLayer.WMS.prototype.onAdd.call(this, map);
       map.on('click', this.getFeatureInfo, this);
+      console.log(this);
     },
     
     onRemove: function (map) {
@@ -114,6 +115,8 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
         infoDiv.innerHTML = '<i>[Nenhuma informação encontrada]</i>';
         return;
          } 
+
+        console.log(content); 
     // do nothing if there's an error
          //console.log(content);
         // console.log(content);
@@ -124,7 +127,7 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
         img.src = graphicUrl;
 
        let text = "";
-        
+      
         if (this.options.title) {
         text += "<h4 style='font-size:18px;'><b>" + this.options.title + "</b></h4>";
          }
@@ -140,6 +143,11 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
                 let valor = content.features[i].properties[x];
 
                 if(x.toUpperCase()=="ÁREA_M²" || x.toUpperCase()=="AREAM2" ){
+                  console.log("converter:",valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                  valor =valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                }
+
+                if(x.toUpperCase()=="SHAPE_LENG"){
                   console.log("converter:",valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
                   valor =valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 }
