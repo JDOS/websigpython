@@ -892,7 +892,7 @@ areas_de_estudo
         <select id="multiSelectInput0" multiple>
             <optgroup  label="Geral">
             {% for Geral in layers.Geral %}
-                <option value="{{Geral.0}}">{{Geral.1}}</option>
+                <option value="{{Geral.0}}">{{Geral.1}} </option><a href="#">teste</a>
             {% endfor %}
             </optgroup>
             <optgroup label="Reservas Naturais">
@@ -1024,6 +1024,32 @@ areas_de_estudo
     noResultsText: 'Nenhum resultado encontrado',
     noChoicesText: 'Sem opções disponíveis',
     itemSelectText: '',
+    searchResultLimit: 15,
+    resetScrollPosition: false,
+  });
+
+window.addEventListener('DOMContentLoaded', () => {
+    choices = new Choices('#multiSelectInput0', { allowHTML: true });
+
+    setTimeout(() => {
+      // Para cada grupo renderizado pelo Choices.js
+      document.querySelectorAll('.choices__group').forEach(group => {
+        group.style.cursor = 'pointer';
+        group.title = 'Clique para selecionar todas as opções deste grupo';
+
+        group.addEventListener('click', () => {
+          // Pega o label do grupo clicado
+          const groupLabel = group.textContent.trim();
+          // Seleciona o select original
+          const select = document.getElementById('multiSelectInput0');
+          // Filtra as opções do optgroup correspondente
+          const groupOptions = Array.from(select.querySelectorAll(`optgroup[label="${groupLabel}"] option`));
+          const values = groupOptions.map(opt => opt.value);
+          // Seleciona todas as opções do grupo usando Choices.js
+          values.forEach(val => multiSelect0.setChoiceByValue(val));
+        });
+      });
+    }, 500);
   });
 
   const multiSelect = new Choices('#multiSelectInput', {
@@ -1033,7 +1059,33 @@ areas_de_estudo
     noResultsText: 'Nenhum resultado encontrado',
     noChoicesText: 'Sem opções disponíveis',
     itemSelectText: '',
+    searchResultLimit: 15,
+    resetScrollPosition: false,
 
+  });
+
+  window.addEventListener('DOMContentLoaded', () => {
+    choices = new Choices('#multiSelectInput', { allowHTML: true });
+
+    setTimeout(() => {
+      // Para cada grupo renderizado pelo Choices.js
+      document.querySelectorAll('.choices__group').forEach(group => {
+        group.style.cursor = 'pointer';
+        group.title = 'Clique para selecionar todas as opções deste grupo';
+
+        group.addEventListener('click', () => {
+          // Pega o label do grupo clicado
+          const groupLabel = group.textContent.trim();
+          // Seleciona o select original
+          const select = document.getElementById('multiSelectInput');
+          // Filtra as opções do optgroup correspondente
+          const groupOptions = Array.from(select.querySelectorAll(`optgroup[label="${groupLabel}"] option`));
+          const values = groupOptions.map(opt => opt.value);
+          // Seleciona todas as opções do grupo usando Choices.js
+          values.forEach(val => multiSelect.setChoiceByValue(val));
+        });
+      });
+    }, 500);
   });
 
 
@@ -1044,7 +1096,33 @@ areas_de_estudo
     noResultsText: 'Nenhum resultado encontrado',
     noChoicesText: 'Sem opções disponíveis',
     itemSelectText: '',
+    searchResultLimit: 15,
+    resetScrollPosition: false,
 
+  });
+
+   window.addEventListener('DOMContentLoaded', () => {
+    choices = new Choices('#multiSelectInput2', { allowHTML: true });
+
+    setTimeout(() => {
+      // Para cada grupo renderizado pelo Choices.js
+      document.querySelectorAll('.choices__group').forEach(group => {
+        group.style.cursor = 'pointer';
+        group.title = 'Clique para selecionar todas as opções deste grupo';
+
+        group.addEventListener('click', () => {
+          // Pega o label do grupo clicado
+          const groupLabel = group.textContent.trim();
+          // Seleciona o select original
+          const select = document.getElementById('multiSelectInput2');
+          // Filtra as opções do optgroup correspondente
+          const groupOptions = Array.from(select.querySelectorAll(`optgroup[label="${groupLabel}"] option`));
+          const values = groupOptions.map(opt => opt.value);
+          // Seleciona todas as opções do grupo usando Choices.js
+          values.forEach(val => multiSelect2.setChoiceByValue(val));
+        });
+      });
+    }, 500);
   });
 
 const select0 = document.getElementById('multiSelectInput0');

@@ -31,12 +31,14 @@ def websig(request):
             nomelayer=str(name).replace(" ","_")
             nomelayer=nomelayer.replace("-", "")
             list_produts[nomelayer]=[]
+            #print(nomelayer)
             for sub in layer.children:
                 name=WORKSPACE+":"+sub.name
                 tupla=(name,sub.title)
                 list_produts[nomelayer].append(tupla)
 
     layers = list_produts
+   # print(layers)
     wms_link_download = "https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.1.1&request=GetFeature&typeName="
     wms_link="https://sistemas.itti.org.br/geoserver/Sanepar/wms?"
     return render(request, "mapas/websig3.html", {"layers":layers,"wms":wms_link,"link_download":wms_link_download})

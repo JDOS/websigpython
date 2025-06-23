@@ -147,7 +147,7 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
                   valor =valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 }
 
-                if(x.toUpperCase()=="SHAPE_LENG"){
+                if(x.toUpperCase()=="SHAPE_LENG" || x.toUpperCase()=="SHAPE_LE_1" || x.toUpperCase()=="SHAPE_AREA" ){
                   console.log("converter:",valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
                   valor =valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 }
