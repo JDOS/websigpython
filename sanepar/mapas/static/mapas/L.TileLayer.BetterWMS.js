@@ -6,6 +6,7 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
      //   console.log(this.options.title); // se você passou title nas options
       L.TileLayer.WMS.prototype.onAdd.call(this, map);
       map.on('click', this.getFeatureInfo, this);
+      //map.on('dblclick', this.zoomRegionGetFeatureInfo, this);
       console.log(this);
     },
     
@@ -170,11 +171,61 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
     //     .setContent(text)
     //     .openOn(this._map);
     
-     }
+     },
 
-
-
-    
+    zoomRegionGetFeatureInfo: function (evt) {
+      var layerName = this.options.layers;
+      console.log(layerName);
+$.ajax({
+  url: "https://sistemas.itti.org.br/geoserver/wms?service=WMS&version=1.3.0&request=GetCapabilities",
+  type: "GET",
+  dataType: "xml",
+  success: function(xml) {
+    // Procura todos os elementos <Layer>
+    $(xml).find("Layer").each(function() {
+      var name = $(this).children("Name").text();
+      if (name === layerName) {
+        // Procura o BoundingBox (pode ser CRS ou SRS)
+        var bboxEl = $(this).children("BoundingBox[CRS='EPSG:4326'], BoundingBox[SRS='EPSG:4326']");
+        if (bboxEl.length > 0) {
+          var minx = parseFloat(bboxEl.attr("minx"));
+          var miny = parseFloat(bboxEl.attr("miny"));
+          var maxx = parseFloat(bboxEl.attr("maxx"));
+          var maxy = parseFloat(bboxEl.attr("maxy"));
+          // Formato para o Leaflet
+          var bbox = [
+            [miny, minx], // canto sudoeste
+            [maxy, maxx]  // canto nordeste
+          ];
+          // Faz o zoom no mapa
+          map.fitBounds(bbox, { maxZoom: 16 });
+          console.log("BBOX:", bbox);
+        } else {
+          // Alternativamente, pega do EX_GeographicBoundingBox
+          var exBBox = $(this).children("EX_GeographicBoundingBox");
+          if (exBBox.length > 0) {
+            var west = parseFloat(exBBox.find("westBoundLongitude").text());
+            var east = parseFloat(exBBox.find("eastBoundLongitude").text());
+            var south = parseFloat(exBBox.find("southBoundLatitude").text());
+            var north = parseFloat(exBBox.find("northBoundLatitude").text());
+            var bbox = [
+              [south, west],
+              [north, east]
+            ];
+            map.fitBounds(bbox, { maxZoom: 16 });
+            console.log("EX_GeographicBoundingBox:", bbox);
+          } else {
+            console.log("BoundingBox não encontrado para o layer.");
+          }
+        }
+      }
+    });
+  },
+  error: function(xhr, status, error) {
+    console.error("Erro ao buscar GetCapabilities:", error);
+  }
+});
+    }
   });
   
   L.tileLayer.betterWms = function (url, options) {
