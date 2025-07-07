@@ -103,19 +103,19 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
     },
     
     showGetFeatureInfo: function (err, latlng, content) {
-      var infoDiv = document.getElementById('info');
-      if (err) { 
-        console.log(err);
-        infoDiv.innerHTML = '<i style="color: red;">Erro ao obter informações</i>';
+      // var infoDiv = document.getElementById('info');
+      // if (err) { 
+      //   console.log(err);
+      //   infoDiv.innerHTML = '<i style="color: red;">Erro ao obter informações</i>';
 
-         return;
-         }
+      //    return;
+      //    }
 
 
-         if (!content || !content.features || content.features.length === 0) {
-        infoDiv.innerHTML = '<i>[Nenhuma informação encontrada]</i>';
-        return;
-         } 
+      //    if (!content || !content.features || content.features.length === 0) {
+      //   infoDiv.innerHTML = '<i>[Nenhuma informação encontrada]</i>';
+      //   return;
+      //    } 
 
         console.log(content); 
     // do nothing if there's an error
@@ -124,13 +124,13 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
          // Remover as tags <style> e seu conteúdo do texto
        // var cleanedHtmlString = content.replace(/<style[^>]*>.*?<\/style>/gs, "<style>tr { display: block; float: left; } th, td { display: block; border: 1px solid white; } tr>*:not(:first-child) { border-top: 0; } tr:not(:first-child)>* { border-left:0; }</style>");
         var graphicUrl = 'https://sistemas.itti.org.br/geoserver/ows?service=WMS&version=1.1.0&request=GetLegendGraphic&layer='+this.options.layers+'&format=image/png';
-        const img = document.getElementById('legend');
-        img.src = graphicUrl;
+        // const img = document.getElementById('legend');
+        // img.src = graphicUrl;
 
        let text = "";
       
-        if (this.options.title) {
-        text += "<h4 style='font-size:18px;'><b>" + this.options.title + "</b></h4>";
+        if (this.options.layers) {
+        text += "<h4 style='font-size:18px;'><b>" + this.title + "</b></h4>";
          }
 
         for (let i = 0; i<content.features.length; i++){
@@ -164,12 +164,12 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
         return
     }
 
-    infoDiv.innerHTML = text;
-      // Otherwise show the content in a popup, or something.
-    //   L.popup({ minWidth:300, maxWidth: 800, maxHeight: 500})
-    //     .setLatLng(latlng)
-    //     .setContent(text)
-    //     .openOn(this._map);
+  //  infoDiv.innerHTML = text;
+   //   Otherwise show the content in a popup, or something.
+      // L.popup({ minWidth:300, maxWidth: 800, maxHeight: 500})
+      //   .setLatLng(latlng)
+      //   .setContent(text)
+      //   .openOn(this._map);
     
      },
 
@@ -228,6 +228,7 @@ $.ajax({
     }
   });
   
-  L.tileLayer.betterWms = function (url, options) {
-    return new L.TileLayer.BetterWMS(url, options);  
+  L.tileLayer.betterWms = function (url, options, title) {
+    console.log("Titulo layer",title);
+    return new L.TileLayer.BetterWMS(url, options, title);  
   };

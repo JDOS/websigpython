@@ -75,7 +75,8 @@
   padding: 6px 12px;
   border-radius: 4px;
   z-index: 1000;
-  max-width: 500px;       /* Limita a largura */
+  min-width: 150px;  
+  max-width: 350px;       /* Limita a largura */
   max-height: 400px;      /* Limita a altura */
   overflow-y: auto;        /* Rolagem se o conteúdo ultrapassar a altura */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Visual mais elegante */
@@ -95,7 +96,7 @@
 #container img {
   display: inline-block;
   margin: 5px; /* opcional */
-  max-width: 150px;
+  max-width: 300px; 
   height: auto;
 }
 
@@ -884,8 +885,8 @@
 
  <div class="infobloco">
       <h4>Legendas</h4>
-       <div><img id="legend"/></div>
-       <div id="info">&nbsp; <i>[Click sobre a camada para mais detalhes]</i></div>
+       <!-- <div><img id="legend"/></div> -->
+       <div id="info"><i>[Click sobre a camada para mais detalhes]</i></div>
        <hr>
        <div id="container"></div>
 
@@ -1222,8 +1223,25 @@ document.addEventListener('click', function(e) {
 const select0 = document.getElementById('multiSelectInput0');
   const select = document.getElementById('multiSelectInput');
   const select2 = document.getElementById('multiSelectInput2');
+  
+        const estiloPadrao = {
+            color: "#1B1B1B", //pretoclaro
+            weight: 0.5,
+            opacity: 0.5,
+            fillOpacity: 0
+        };
 
-     const leafletLayers = [];
+        const estiloDestaque = {
+            color: "#4169E1", //azul
+            weight: 3,
+            opacity: 1.0,
+            fillOpacity: 0
+        };
+
+let camadaSelecionada = null;
+const leafletLayers = [];
+const leafletGEOJSONLayers = [];
+
   // Evento de mudança
 const container = document.getElementById('container');
 
@@ -1231,7 +1249,7 @@ const container = document.getElementById('container');
 
   const selectedValues = multiSelect0.getValue(true);
   const selectedText = event.detail.label;
-  console.log(selectedValues);
+ // console.log(selectedValues);
   console.log("Titulo",selectedText);
 
 // Adiciona apenas as layers que ainda não existem
@@ -1244,15 +1262,16 @@ const container = document.getElementById('container');
         tile: true, 
         format: 'image/png',
         maxZoom: 22,
-      }).addTo(map);
-        console.log(layerName);
+      }, title=event.detail.label).addTo(map);
+
+       // console.log(layerName);
         const subContainer = document.createElement('div');
         subContainer.id = layerName;
         const legend_img = document.createElement('img');
         legend_img.src = 'https://sistemas.itti.org.br/geoserver/ows?service=WMS&version=1.1.0&request=GetLegendGraphic&layer='+layerName+'&format=image/png';
         legend_img.alt = layerName;
         const legend_text = document.createElement('p');
-        legend_text.textContent = event.detail.label;;
+        legend_text.textContent = event.detail.label;
         subContainer.appendChild(legend_text);
         subContainer.appendChild(legend_img);
         container.prepend(subContainer);
@@ -1270,7 +1289,7 @@ const container = document.getElementById('container');
 
   const selectedValues = multiSelect.getValue(true);
   const selectedText = event.detail.label;
-  console.log(selectedValues);
+ // console.log(selectedValues);
 // Adiciona apenas as layers que ainda não existem
   selectedValues.forEach(layerName => {
     // Verifica se já existe
@@ -1281,7 +1300,129 @@ const container = document.getElementById('container');
         tile: true, 
         format: 'image/png',
         maxZoom: 22,
-      }).addTo(map);
+      },title=event.detail.label).addTo(map);
+
+        const baseUrl = 'https://sistemas.itti.org.br/geoserver/Sanepar/ows';
+        const typeName = layerName;
+        const geoserverUrl = `${baseUrl}?service=WFS&version=1.0.0&request=GetFeature&typeName=${encodeURIComponent(typeName)}&outputFormat=application/json&srsName=EPSG:4326`;
+
+        if (!leafletGEOJSONLayers.find(item => item.name === layerName)) {
+        fetch(geoserverUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (!data || !data.features || data.features.length === 0) {
+                    console.log("GeoJSON recebido, mas sem 'features'.");
+                    map.setView([-15.78, -47.92], 4);
+                    return;
+                }
+
+                const CapaGeoJSON = L.geoJSON(data, {
+                    // El estilo inicial para todas las features será el estilo padrão
+                    style: estiloPadrao,
+
+                    // Esta función se ejecuta para cada feature creada
+                    onEachFeature: function(feature, layer) {
+                        // --- NOVO: Añadir el evento de clic a cada capa ---
+                        layer.on('click', function(e) {
+                            // 1. Si ya hay una capa seleccionada, la restauramos a su estilo original
+                            if (camadaSelecionada) {
+                                camadaSelecionada.setStyle(estiloPadrao);
+                            }
+
+                            // 2. Resaltamos la capa actual que fue clicada
+                            layer.setStyle(estiloDestaque);
+
+                            // 3. Guardamos la capa actual como la seleccionada
+                            camadaSelecionada = layer;
+
+                            // Evita que el clic se propague al mapa (importante!)
+                            L.DomEvent.stopPropagation(e);
+                        });
+
+                 
+                                            
+                        let popupContent = "";
+
+                        //Título para popup e remoção de dados
+                        
+                        for (const key in feature.properties) {
+                            //Escreve título popup
+                            const valor_prop = feature.properties[key];
+                            if(key.toUpperCase()=="NOMESHP" && valor_prop!=null  && valor_prop!=0 && String(valor_prop).trim() !== ""){
+                              popupContent += `<h5>${feature.properties[key]}</h5><br>`
+                              break;
+                            }
+
+                            else if(key.toUpperCase()=="NOME" && valor_prop!=null  && valor_prop!=0 && String(valor_prop).trim() !== ""){
+                              popupContent += `<h5>${feature.properties[key]}</h5><br>`
+                              
+                            }
+                        }
+
+                        //adicionar propriedades para remover
+                        const listaremoverpropriedades =["NOMESHP","OID_","FOLDERPATH","POPUPINFO","SNIPPET","SYMBOLLD","ALTMODE","BASE","CLAMPED","EXTRUDED","OBJECTID", "ID"];
+                        const listapropriedades={};
+
+                        for (const key in feature.properties) {
+                            //Escreve título popup
+                            const valor = feature.properties[key];
+                                if (
+                                  !listaremoverpropriedades.includes(key.toUpperCase()) &&
+                                  valor != null &&
+                                  String(valor).trim() !== "" &&
+                                  valor != 0
+                                ) {
+                                  listapropriedades[key] = valor;
+                                }
+                        }
+
+                        let contador = 0
+                        for (const key in listapropriedades) {
+                            contador+=1;
+                            if(key.toUpperCase()=="AREAM2" || key=="Área__m2" || key=="Área__m²" || key=="Área_m2" || key=="Área_m²"){
+                              popupContent += `<b>Área:</b> ${listapropriedades[key].toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m²<br>`;
+                            }
+                            else if(key.toUpperCase()=="ESPECIE"){
+                               popupContent += `<b>Espécie:</b> ${listapropriedades[key]}<br>`
+                            }
+                            else if(key=="Shape_Leng"){
+                              popupContent += `<b>Comprimento Shape:</b> ${listapropriedades[key].toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m²<br>`;
+                            }
+                            else if(key=="Shape_Area"){
+                              popupContent += `<b>Área Shape:</b> ${listapropriedades[key].toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m²<br>`;
+                            }
+                            else if(key=="Perímetro"){
+                              popupContent += `<b>Perímetro:</b> ${listapropriedades[key].toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m²<br>`;
+                            }
+                            else{
+                              
+                                popupContent += `<b>${key}:</b> ${listapropriedades[key]}<br>`;
+                            }
+                            
+                        }
+                        layer.bindPopup(popupContent);
+                    }
+                }).addTo(map);
+
+      leafletGEOJSONLayers.push({
+        name: layerName,
+        layer: CapaGeoJSON,
+      });
+      //          const bounds = CapaGeoJSON.getBounds();
+      //          if (bounds.isValid()) {
+     //               map.fitBounds(bounds);
+    //            } else {
+    //                map.setView([-15.78, -47.92], 4);
+  //              }
+
+            })
+            .catch(error => {
+                console.error('Problema com operação fetch:', error);
+                console.log("Não pode carregar do GeoServer.");
+            });
+
+        }
+
 
         const subContainer = document.createElement('div');
         subContainer.id = layerName;
@@ -1289,7 +1430,7 @@ const container = document.getElementById('container');
         legend_img.src = 'https://sistemas.itti.org.br/geoserver/ows?service=WMS&version=1.1.0&request=GetLegendGraphic&layer='+layerName+'&format=image/png';
         legend_img.alt = layerName;
         const legend_text = document.createElement('p');
-        legend_text.textContent = event.detail.label;;
+        legend_text.textContent = event.detail.label;
         subContainer.appendChild(legend_text);
         subContainer.appendChild(legend_img);
         container.prepend(subContainer);
@@ -1302,6 +1443,16 @@ const container = document.getElementById('container');
     }
   });
 });
+
+
+        map.on('click', function() {
+            if (camadaSelecionada) {
+                // Si hay una capa seleccionada, la restauramos a su estilo original
+                camadaSelecionada.setStyle(estiloPadrao);
+                // Limpiamos la variable de selección
+                camadaSelecionada = null;
+            }
+        });
 
   select2.addEventListener('addItem', function() {
 
@@ -1318,7 +1469,7 @@ const container = document.getElementById('container');
         tile: true, 
         format: 'image/png',
         maxZoom: 22,
-      }).addTo(map);
+      },title=event.detail.label).addTo(map);
 
         const subContainer = document.createElement('div');
         subContainer.id = layerName;
@@ -1326,7 +1477,7 @@ const container = document.getElementById('container');
         legend_img.src = 'https://sistemas.itti.org.br/geoserver/ows?service=WMS&version=1.1.0&request=GetLegendGraphic&layer='+layerName+'&format=image/png';
         legend_img.alt = layerName;
         const legend_text = document.createElement('p');
-        legend_text.textContent = event.detail.label;;
+        legend_text.textContent = event.detail.label;
         subContainer.appendChild(legend_text);
         subContainer.appendChild(legend_img);
         container.prepend(subContainer);
@@ -1343,9 +1494,20 @@ const container = document.getElementById('container');
 function removeLayerByName(name) {
   const index = leafletLayers.findIndex(item => item.name === name);
   if (index !== -1) {
-    map.removeLayer(leafletLayers[index].layer);
+    if (leafletLayers[index].layer) {
+      map.removeLayer(leafletLayers[index].layer);
+    }
     leafletLayers.splice(index, 1);
   }
+
+  const index2 = leafletGEOJSONLayers.findIndex(item => item.name === name);
+  if (index2 !== -1) {
+    if (leafletGEOJSONLayers[index2].layer) {
+      map.removeLayer(leafletGEOJSONLayers[index2].layer);
+    }
+    leafletGEOJSONLayers.splice(index2, 1);
+  }
+
 }
 
  function removerDiv(id) {
