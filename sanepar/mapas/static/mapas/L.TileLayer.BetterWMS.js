@@ -7,7 +7,6 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
       L.TileLayer.WMS.prototype.onAdd.call(this, map);
       map.on('click', this.getFeatureInfo, this);
       //map.on('dblclick', this.zoomRegionGetFeatureInfo, this);
-      console.log(this);
     },
     
     onRemove: function (map) {
@@ -21,7 +20,7 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
       // Make an AJAX request to the server and hope for the best
       var url = this.getFeatureInfoUrl(evt.latlng),
           showResults = L.Util.bind(this.showGetFeatureInfo, this);
-          console.log(url);
+         // console.log(url);
       $.ajax({
         url: url,
         success: function (data, status, xhr) {
@@ -117,7 +116,7 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
       //   return;
       //    } 
 
-        console.log(content); 
+    //    console.log(content); 
     // do nothing if there's an error
          //console.log(content);
         // console.log(content);
@@ -175,7 +174,7 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
 
     zoomRegionGetFeatureInfo: function (evt) {
       var layerName = this.options.layers;
-      console.log(layerName);
+   //   console.log(layerName);
 $.ajax({
   url: "https://sistemas.itti.org.br/geoserver/wms?service=WMS&version=1.3.0&request=GetCapabilities",
   type: "GET",
@@ -199,7 +198,7 @@ $.ajax({
           ];
           // Faz o zoom no mapa
           map.fitBounds(bbox, { maxZoom: 16 });
-          console.log("BBOX:", bbox);
+   //       console.log("BBOX:", bbox);
         } else {
           // Alternativamente, pega do EX_GeographicBoundingBox
           var exBBox = $(this).children("EX_GeographicBoundingBox");
@@ -213,7 +212,7 @@ $.ajax({
               [north, east]
             ];
             map.fitBounds(bbox, { maxZoom: 16 });
-            console.log("EX_GeographicBoundingBox:", bbox);
+         //   console.log("EX_GeographicBoundingBox:", bbox);
           } else {
             console.log("BoundingBox não encontrado para o layer.");
           }
@@ -229,6 +228,6 @@ $.ajax({
   });
   
   L.tileLayer.betterWms = function (url, options, title) {
-    console.log("Titulo layer",title);
+ //   console.log("Titulo layer",title);
     return new L.TileLayer.BetterWMS(url, options, title);  
   };
