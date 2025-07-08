@@ -1312,19 +1312,23 @@ const container = document.getElementById('container');
                         for (const key in feature.properties) {
                             //Escreve título popup
                             const valor_prop = feature.properties[key];
-                            if(key.toUpperCase()=="NOMESHP" && valor_prop!=null  && valor_prop!=0 && String(valor_prop).trim() !== ""){
+                             if(key.toUpperCase()=="NOMESHP" && valor_prop!=null  && valor_prop!=0 && String(valor_prop).trim() !== ""){
+                              popupContent += `<h5>${feature.properties[key]}</h5><br>`
+                              break;
+                             }
+
+                            if(key.toUpperCase()=="NOME" && valor_prop!=null  && valor_prop!=0 && String(valor_prop).trim() !== ""){
                               popupContent += `<h5>${feature.properties[key]}</h5><br>`
                               break;
                             }
-
-                            else if(key.toUpperCase()=="NOME" && valor_prop!=null  && valor_prop!=0 && String(valor_prop).trim() !== ""){
+                            else if(key.toUpperCase()=="NAME" && valor_prop!=null  && valor_prop!=0 && String(valor_prop).trim() !== ""){
                               popupContent += `<h5>${feature.properties[key]}</h5><br>`
-                              
+                              break;
                             }
                         }
 
                         //adicionar propriedades para remover
-                        const listaremoverpropriedades =["NOMESHP","OID_","FOLDERPATH","POPUPINFO","SNIPPET","SYMBOLLD","ALTMODE","BASE","CLAMPED","EXTRUDED","OBJECTID", "ID"];
+                        const listaremoverpropriedades =["0","-1","VISIBILITY","ENTITYHAND","TESSELLATE","SUBCLASSES","NOMESHP","OID_","FOLDERPATH","POPUPINFO","SNIPPET","SYMBOLLD","ALTMODE","BASE","CLAMPED","EXTRUDED","OBJECTID", "ID"];
                         const listapropriedades={};
 
                         for (const key in feature.properties) {
@@ -1334,7 +1338,7 @@ const container = document.getElementById('container');
                                   !listaremoverpropriedades.includes(key.toUpperCase()) &&
                                   valor != null &&
                                   String(valor).trim() !== "" &&
-                                  valor != 0
+                                  valor != 0 
                                 ) {
                                   listapropriedades[key] = valor;
                                 }
@@ -1357,6 +1361,9 @@ const container = document.getElementById('container');
                             }
                             else if(key=="Perímetro"){
                               popupContent += `<b>Perímetro:</b> ${listapropriedades[key].toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m²<br>`;
+                            }
+                            else if(key=="area_ha"){
+                              popupContent += `<b>Área:</b> ${listapropriedades[key].toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ha<br>`;
                             }
                             else{
                               
