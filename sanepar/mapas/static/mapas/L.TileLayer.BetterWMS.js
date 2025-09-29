@@ -6,7 +6,7 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
      //   console.log(this.options.title); // se você passou title nas options
       L.TileLayer.WMS.prototype.onAdd.call(this, map);
       map.on('click', this.getFeatureInfo, this);
-      //map.on('dblclick', this.zoomRegionGetFeatureInfo, this);
+     // map.on('dblclick', this.zoomRegionGetFeatureInfo, this);
     },
     
     onRemove: function (map) {
@@ -141,6 +141,7 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
             // }
             for (const x in content.features[i].properties) {
                 let valor = content.features[i].properties[x];
+                valor = valor ? valor.charAt(0).toUpperCase() + valor.slice(1) : '';
 
                 if(x.toUpperCase()=="ÁREA_M²" || x.toUpperCase()=="AREAM2" ){
                   console.log("converter:",valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
@@ -172,11 +173,35 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
     
      },
 
+layerExistsInNovoGeoserver: function (layerName, novo_geoserver) {
+  for (const key of Object.keys(novo_geoserver)) {
+    //console.log(`\n${key}:`);
+    for (const item of novo_geoserver[key]) {
+      //console.log(`${layerName} ${item[0]}`);
+      if (layerName.trim() === item[0].trim()) {
+        return true; // Agora funciona corretamente
+      }
+    }
+  }
+  return false;
+},
+
     zoomRegionGetFeatureInfo: function (evt) {
       var layerName = this.options.layers;
    //   console.log(layerName);
+
+        if (this.layerExistsInNovoGeoserver(layerName, novo_geoserver)) {
+            console.log("LayerName está em novo_geoserver");
+            var link_geoserver = "https://www.reservashidricasiguacu.com.br/geoserver/sanepar/wms?service=WMS&version=1.3.0&request=GetCapabilities" ;
+        } 
+        if (!(this.layerExistsInNovoGeoserver(layerName, novo_geoserver))) {
+          console.log("LayerName NÃO está em novo_geoserver");
+            var link_geoserver = "https://sistemas.itti.org.br/geoserver/Sanepar/wms?service=WMS&version=1.3.0&request=GetCapabilities";
+        }
+
+
 $.ajax({
-  url: "https://sistemas.itti.org.br/geoserver/wms?service=WMS&version=1.3.0&request=GetCapabilities",
+  url: link_geoserver,
   type: "GET",
   dataType: "xml",
   success: function(xml) {

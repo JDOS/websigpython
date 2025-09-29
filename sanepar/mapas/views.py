@@ -8,9 +8,13 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from owslib.wms import WebMapService
+import json
 
 URL = "https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WMS&version=1.1.1&request=GetCapabilities"
 WORKSPACE = "Sanepar"
+
+URL2 = "https://www.reservashidricasiguacu.com.br/geoserver/sanepar/ows?service=WMS&version=1.1.1&request=GetCapabilities"
+WORKSPACE2 = "sanepar"
 
 def index(request):
     context = {}
@@ -38,10 +42,33 @@ def websig(request):
                 list_produts[nomelayer].append(tupla)
 
     layers = list_produts
+
+    wms = WebMapService(URL2)
+    list_produts = {}
+    for name in wms.contents:
+        layer = wms[name]
+        if hasattr(layer, 'children') and layer.children:
+            nomelayer=str(name).replace(" ","_")
+            nomelayer=nomelayer.replace("-", "")
+            list_produts[nomelayer]=[]
+            #print(nomelayer)
+            for sub in layer.children:
+                name=WORKSPACE2+":"+sub.name
+                tupla=(name,sub.title)
+                list_produts[nomelayer].append(tupla)
+
+    layers2 = list_produts
+    layers2_json = {k: [list(t) for t in v] for k, v in layers2.items()}
+    novo_geoserver_json = json.dumps(layers2_json, ensure_ascii=False, indent=2)
+    #print(layers2)
+
    # print(layers)
     wms_link_download = "https://sistemas.itti.org.br/geoserver/Sanepar/ows?service=WFS&version=1.1.1&request=GetFeature&typeName="
     wms_link="https://sistemas.itti.org.br/geoserver/Sanepar/wms?"
-    return render(request, "mapas/websig3.html", {"layers":layers,"wms":wms_link,"link_download":wms_link_download})
+    wms_link2="https://www.reservashidricasiguacu.com.br/geoserver/sanepar/wms?"
+
+
+    return render(request, "mapas/websig3.html", {"layers":layers,"wms":wms_link,"link_download":wms_link_download,"layers2":layers2,"wms_link2":wms_link2, "novo_geoserver_json":novo_geoserver_json})
 
 def streetview(request):
     context = {}

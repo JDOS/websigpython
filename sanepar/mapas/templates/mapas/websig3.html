@@ -903,7 +903,7 @@ areas_de_estudo
     <div class="selectLayers">
         <select id="multiSelectInput0" multiple>
             <optgroup  label="Geral">
-            {% for Geral in layers.Geral %}
+            {% for Geral in layers2.Geral %}
                 <option value="{{Geral.0}}">{{Geral.1}} </option><a href="#">teste</a>
             {% endfor %}
             </optgroup>
@@ -926,7 +926,7 @@ areas_de_estudo
         <select id="multiSelectInput" multiple>
              
             <optgroup label="Produto 2">
-                    {% for layer in layers.L2_P2 %}
+                    {% for layer in layers2.L2_P2 %}
                        <option value="{{layer.0}}">{{layer.1}}</option>
                     {% endfor %}
             <optgroup label=" Produto 2 - RGB">
@@ -947,36 +947,36 @@ areas_de_estudo
             </optgroup>
            
             <optgroup label="Produto 3">
-                    {% for layer in layers.L2_P3 %}
+                    {% for layer in layers2.L2_P3 %}
                        <option value="{{layer.0}}">{{layer.1}}</option>
                     {% endfor %}
             </optgroup>
         
             <optgroup label="Produto 4">
-                    {% for layer in layers.L2_P4 %}
+                    {% for layer in layers2.L2_P4 %}
                        <option value="{{layer.0}}">{{layer.1}}</option>
                     {% endfor %}
             </optgroup>
 
             <optgroup label="Produto 5">
-                    {% for layer in layers.L2_P5 %}
+                    {% for layer in layers2.L2_P5 %}
                        <option value="{{layer.0}}">{{layer.1}}</option>
                     {% endfor %}
             </optgroup>
 
             <optgroup label="Produto 6">
-                    {% for layer in layers.L2_P6 %}
+                    {% for layer in layers2.L2_P6 %}
                        <option value="{{layer.0}}">{{layer.1}}</option>
                     {% endfor %}
             </optgroup>
 
             <optgroup label="Produto 8">
-                    {% for layer in layers.L2_P8 %}
+                    {% for layer in layers2.L2_P8 %}
                        <option value="{{layer.0}}">{{layer.1}}</option>
                     {% endfor %}
             </optgroup>
             <optgroup label="Produto 9">
-                    {% for layer in layers.L2_P9 %}
+                    {% for layer in layers2.L2_P9 %}
                        <option value="{{layer.0}}">{{layer.1}}</option>
                     {% endfor %}
             </optgroup>
@@ -1004,7 +1004,7 @@ areas_de_estudo
                     {% endfor %}
               </optgroup>
               <optgroup label="Produto 6">
-                    {% for layer in layers.L3_P6 %}
+                    {% for layer in layers2.L3_P6 %}
                        <option value="{{layer.0}}">{{layer.1}}</option>
                     {% endfor %}
               </optgroup>
@@ -1016,6 +1016,9 @@ areas_de_estudo
   </div>
 
   <script>
+
+
+        const novo_geoserver= {{novo_geoserver_json|safe}};
 
     $(function() {
     // Inicializa o dialog
@@ -1252,11 +1255,36 @@ const container = document.getElementById('container');
  // console.log(selectedValues);
   console.log("Titulo",selectedText);
 
+const layerExistsInNovoGeoserver = function (layerName, novo_geoserver) {
+  for (const key of Object.keys(novo_geoserver)) {
+    //console.log(`\n${key}:`);
+    for (const item of novo_geoserver[key]) {
+      //console.log(`${layerName} ${item[0]}`);
+      if (layerName.trim() === item[0].trim()) {
+        return true; // Agora funciona corretamente
+      }
+    }
+  }
+  return false;
+}
+
 // Adiciona apenas as layers que ainda não existem
   selectedValues.forEach(layerName => {
+
     // Verifica se já existe
     if (!leafletLayers.find(item => item.name === layerName)) {
-      const wmsLayer = L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {
+
+      if (layerExistsInNovoGeoserver(layerName, novo_geoserver)) {
+          console.log("LayerName está em novo_geoserver");
+          var link_geoserver = "https://www.reservashidricasiguacu.com.br/geoserver/sanepar/" ;
+      } 
+      if (!(layerExistsInNovoGeoserver(layerName, novo_geoserver))) {
+        console.log("LayerName NÃO está em novo_geoserver");
+          var link_geoserver = "https://sistemas.itti.org.br/geoserver/Sanepar/";
+      }
+
+
+      const wmsLayer = L.tileLayer.betterWms(link_geoserver+"wms?", {
         layers: layerName,
         transparent: true,
         tile: true, 
@@ -1266,7 +1294,7 @@ const container = document.getElementById('container');
 
 
       
-        const baseUrl = 'https://sistemas.itti.org.br/geoserver/Sanepar/ows';
+        const baseUrl = link_geoserver+'ows';
         const typeName = layerName;
         const geoserverUrl = `${baseUrl}?service=WFS&version=1.0.0&request=GetFeature&typeName=${encodeURIComponent(typeName)}&outputFormat=application/json&srsName=EPSG:4326`;
 
@@ -1366,8 +1394,8 @@ const container = document.getElementById('container');
                               popupContent += `<b>Área:</b> ${listapropriedades[key].toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ha<br>`;
                             }
                             else{
-                              
-                                popupContent += `<b>${key}:</b> ${listapropriedades[key]}<br>`;
+                                var valor = key ? key.charAt(0).toUpperCase() + key.slice(1) : '';
+                                popupContent += `<b>${valor}:</b> ${listapropriedades[key]}<br>`;
                             }
                             
                         }
@@ -1398,7 +1426,7 @@ const container = document.getElementById('container');
         const subContainer = document.createElement('div');
         subContainer.id = layerName;
         const legend_img = document.createElement('img');
-        legend_img.src = 'https://sistemas.itti.org.br/geoserver/ows?service=WMS&version=1.1.0&request=GetLegendGraphic&layer='+layerName+'&format=image/png';
+        legend_img.src = link_geoserver+'ows?service=WMS&version=1.1.0&request=GetLegendGraphic&layer='+layerName+'&format=image/png';
         legend_img.alt = layerName;
         const legend_text = document.createElement('p');
         legend_text.textContent = event.detail.label;
@@ -1415,6 +1443,19 @@ const container = document.getElementById('container');
   });
 });
 
+const layerExistsInNovoGeoserver = function (layerName, novo_geoserver) {
+  for (const key of Object.keys(novo_geoserver)) {
+    //console.log(`\n${key}:`);
+    for (const item of novo_geoserver[key]) {
+      //console.log(`${layerName} ${item[0]}`);
+      if (layerName.trim() === item[0].trim()) {
+        return true; // Agora funciona corretamente
+      }
+    }
+  }
+  return false;
+}
+
   select.addEventListener('addItem', function(event) {
 
   const selectedValues = multiSelect.getValue(true);
@@ -1424,7 +1465,18 @@ const container = document.getElementById('container');
   selectedValues.forEach(layerName => {
     // Verifica se já existe
     if (!leafletLayers.find(item => item.name === layerName)) {
-      const wmsLayer = L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {
+
+
+      if (layerExistsInNovoGeoserver(layerName, novo_geoserver)) {
+          console.log("LayerName está em novo_geoserver");
+          var link_geoserver = "https://www.reservashidricasiguacu.com.br/geoserver/sanepar/" ;
+      } 
+      if (!(layerExistsInNovoGeoserver(layerName, novo_geoserver))) {
+        console.log("LayerName NÃO está em novo_geoserver");
+          var link_geoserver = "https://sistemas.itti.org.br/geoserver/Sanepar/";
+      }
+
+      const wmsLayer = L.tileLayer.betterWms(link_geoserver+'wms?', {
         layers: layerName,
         transparent: true,
         tile: true, 
@@ -1432,7 +1484,7 @@ const container = document.getElementById('container');
         maxZoom: 22,
       },title=event.detail.label).addTo(map);
 
-        const baseUrl = 'https://sistemas.itti.org.br/geoserver/Sanepar/ows';
+        const baseUrl = link_geoserver+'ows';
         const typeName = layerName;
         const geoserverUrl = `${baseUrl}?service=WFS&version=1.0.0&request=GetFeature&typeName=${encodeURIComponent(typeName)}&outputFormat=application/json&srsName=EPSG:4326`;
 
@@ -1525,8 +1577,8 @@ const container = document.getElementById('container');
                               popupContent += `<b>Perímetro:</b> ${listapropriedades[key].toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m²<br>`;
                             }
                             else{
-                              
-                                popupContent += `<b>${key}:</b> ${listapropriedades[key]}<br>`;
+                                var valor = key ? key.charAt(0).toUpperCase() + key.slice(1) : '';
+                                popupContent += `<b>${valor}:</b> ${listapropriedades[key]}<br>`;
                             }
                             
                         }
@@ -1557,7 +1609,7 @@ const container = document.getElementById('container');
         const subContainer = document.createElement('div');
         subContainer.id = layerName;
         const legend_img = document.createElement('img');
-        legend_img.src = 'https://sistemas.itti.org.br/geoserver/ows?service=WMS&version=1.1.0&request=GetLegendGraphic&layer='+layerName+'&format=image/png';
+        legend_img.src = link_geoserver+'ows?service=WMS&version=1.1.0&request=GetLegendGraphic&layer='+layerName+'&format=image/png';
         legend_img.alt = layerName;
         const legend_text = document.createElement('p');
         legend_text.textContent = event.detail.label;
@@ -1593,7 +1645,18 @@ const container = document.getElementById('container');
   selectedValues.forEach(layerName => {
     // Verifica se já existe
     if (!leafletLayers.find(item => item.name === layerName)) {
-      const wmsLayer = L.tileLayer.betterWms('https://sistemas.itti.org.br/geoserver/Sanepar/wms?', {
+
+        if (layerExistsInNovoGeoserver(layerName, novo_geoserver)) {
+            console.log("LayerName está em novo_geoserver");
+            var link_geoserver = "https://www.reservashidricasiguacu.com.br/geoserver/sanepar/" ;
+        } 
+        if (!(layerExistsInNovoGeoserver(layerName, novo_geoserver))) {
+          console.log("LayerName NÃO está em novo_geoserver");
+            var link_geoserver = "https://sistemas.itti.org.br/geoserver/Sanepar/";
+        }
+
+      
+      const wmsLayer = L.tileLayer.betterWms(link_geoserver+'wms?', {
         layers: layerName,
         transparent: true,
         tile: true, 
@@ -1602,7 +1665,7 @@ const container = document.getElementById('container');
       },title=event.detail.label).addTo(map);
 
      
-        const baseUrl = 'https://sistemas.itti.org.br/geoserver/Sanepar/ows';
+        const baseUrl = link_geoserver+'ows';
         const typeName = layerName;
         const geoserverUrl = `${baseUrl}?service=WFS&version=1.0.0&request=GetFeature&typeName=${encodeURIComponent(typeName)}&outputFormat=application/json&srsName=EPSG:4326`;
 
@@ -1695,8 +1758,8 @@ const container = document.getElementById('container');
                               popupContent += `<b>Perímetro:</b> ${listapropriedades[key].toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m²<br>`;
                             }
                             else{
-                              
-                                popupContent += `<b>${key}:</b> ${listapropriedades[key]}<br>`;
+                                var valor = key ? key.charAt(0).toUpperCase() + key.slice(1) : '';
+                                popupContent += `<b>${valor}:</b> ${listapropriedades[key]}<br>`;
                             }
                             
                         }
@@ -1727,7 +1790,7 @@ const container = document.getElementById('container');
         const subContainer = document.createElement('div');
         subContainer.id = layerName;
         const legend_img = document.createElement('img');
-        legend_img.src = 'https://sistemas.itti.org.br/geoserver/ows?service=WMS&version=1.1.0&request=GetLegendGraphic&layer='+layerName+'&format=image/png';
+        legend_img.src = link_geoserver+'ows?service=WMS&version=1.1.0&request=GetLegendGraphic&layer='+layerName+'&format=image/png';
         legend_img.alt = layerName;
         const legend_text = document.createElement('p');
         legend_text.textContent = event.detail.label;
